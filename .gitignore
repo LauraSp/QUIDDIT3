@@ -1,0 +1,13 @@
+*.pyc
+test results
+test review
+test2 res
+test2 results
+test2 rev
+test2 review
+test3 rev
+.vscode/launch.json
+old/*
+123QCanvasHelper_old.py
+QPlot.py
+Qtest.py
