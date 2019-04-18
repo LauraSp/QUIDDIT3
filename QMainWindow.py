@@ -216,7 +216,7 @@ class MainWindow(QTclBaseWindow):
         pass
 
     def click_exit(self):
-        pass
+        self.root.destroy()
 
     def display_next(self):
         if self.canhelper != None:
