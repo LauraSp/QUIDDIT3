@@ -201,26 +201,36 @@ class QUtility:
         IaB_calc = 1-(NA2/NT)
         error = IaB_measured - IaB_calc
         return error**2   
- 
 
     @staticmethod
-    def Nd_bound_abdconst(params):
-        a, b, d, poly1 = params
-        return .365*b - d
-
-    
-
-
-
-    @staticmethod
-    def Nd_bound(params):
-        a, b, d, poly1 = params
+    def Nd_bound1(params):
+        b, d = params
         return .365*b - d
 
     @staticmethod
     def Nd_bound2(params):
-        c, a, b, d, poly1 = params
-        return .365*b - d    
+        b, d, const = params
+        return .365*b - d 
+
+    @staticmethod
+    def Nd_bound3(params):
+        a, b, d = params
+        return .365*b - d 
+
+    @staticmethod
+    def Nd_bound4(params):
+        a, b, d, const = params
+        return .365*b - d 
+
+    @staticmethod
+    def Nd_bound5(params):
+        c, a, x, b, d = params
+        return .365*b - d
+
+    @staticmethod
+    def Nd_bound6(params):
+        c, a, x, b, d, const = params
+        return .365*b - d
     
     @staticmethod
     def pp_cons1(params):
