@@ -39,9 +39,9 @@ class QTclPopupWindow(QTclWindowBasics, tk.Toplevel):
     def make_gui(self, title):
         raise TclWinBaseUsageException("Override me! Always override loaded method")        
 
-    def add_std_buttons(self, okcol=None, cancelcol=None, dismisscol=None, row=None, padx=(5,5), pady=(5,5)):
+    def add_std_buttons(self, okcol=None, cancelcol=None, dismisscol=None, yescol=None, nocol=None, row=None, padx=(5,5), pady=(5,5)):
         if row == None:
-            raise "Missing in row"
+            raise Exception("Missing in row")
 
         if okcol != None:
             self.bind('<Return>', self.ok_event)
@@ -57,6 +57,25 @@ class QTclPopupWindow(QTclWindowBasics, tk.Toplevel):
             self.makebutton(erow=row, ecol=cancelcol,
                                  width=5,
                                  caption='Cancel',
+                                 cmd=self.cancel_pressed,
+                                 sticky=tk.W,
+                                 padx=padx,
+                                 pady=pady)
+
+        if yescol != None:
+            self.bind('<Return>', self.ok_event)
+            self.makebutton(erow=row, ecol=yescol,
+                                 width=5,
+                                 caption='Yes',
+                                 cmd=self.ok_pressed,
+                                 sticky=tk.E,
+                                 padx=padx,
+                                 pady=pady)
+        if nocol != None:
+            self.bind('<Escape>', self.cancel_event)
+            self.makebutton(erow=row, ecol=nocol,
+                                 width=5,
+                                 caption='No',
                                  cmd=self.cancel_pressed,
                                  sticky=tk.W,
                                  padx=padx,

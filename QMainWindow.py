@@ -6,6 +6,7 @@ Created on Wed Apr  3 11:09:40 2019
 """
 
 import os
+import sys
 import webbrowser
 from QImpWindowBasics import *
 import numpy as np
@@ -216,7 +217,14 @@ class MainWindow(QTclBaseWindow):
         pass
 
     def click_exit(self):
-        self.root.destroy()
+        try:
+            mwin = QTclMessageWindow(mw, "QUIDDIT Question", "Just to make sure ...", "Do you really want to quit QUIDDIT?")
+            if mwin.dresult == 'OK':
+                self.root.destroy()
+        except Exception as e:
+            mwin = QTclMessageWindow(mw, "QUODDIT Error", "An unhandled error has occured", 
+                "The original message was: {}".format(str(e)),
+                 e)
 
     def display_next(self):
         if self.canhelper != None:
