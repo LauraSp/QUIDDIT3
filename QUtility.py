@@ -167,10 +167,16 @@ class QUtility:
     @staticmethod
     def CAXBD(factors, components):
         """returns sum of A, B and D spectra weighted by a, b and d"""
-        #print('factors: {}'.format(factors))
-        #print('components: {}'.format(components))
         factors = np.nan_to_num(factors)
-        model_spec = np.sum(factors[:-1] * components, axis=1) + factors[-1]
+        
+        # components should have shape (m, n), factors should have shape (n,) or (n+1,).
+        # If a constant is added, factors will be one item longer (= n+1) than components
+        
+        if np.shape(factors)[0] == np.shape(components)[1]: #no constant
+            model_spec = np.sum(factors * components, axis=1)
+        else:                                               #constant
+            model_spec = np.sum(factors[:-1] * components, axis=1) + factors[-1]
+    
         return np.array(model_spec)
     
     @staticmethod
