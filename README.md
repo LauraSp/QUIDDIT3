@@ -45,7 +45,6 @@ If you are using Anaconda, start **Spyder** (either directly from the start menu
 ## Known Bugs and Issues
 This section provides an overview over known issues with QUIDDIT in order of priority. The author is working on resolving them but no guarantee can be given at what point they will be fixed.
 
-* Results of spectra that contain the C-centre currently can't be plotted
 * Review only works if selected spectra match the content of the review file completely
 * moving the cursor to the diagram frame sometimes leads to flickering of the window because displaying x-y-data at the bottom changes sizing. This can be avoided by making the window bigger.
 
