@@ -22,7 +22,7 @@ from QSettings import *
 ###############################################################################
 ########################### INPUT & DATA ######################################
 
-def deconvolution(filename, age, N_selection_dict):
+def deconvolution(filename, age, N_selection):
 
     N_selection = np.array((N_selection))
 
@@ -266,41 +266,53 @@ def deconvolution(filename, age, N_selection_dict):
     N_cons = []
     N_res = []
     
-    if (N_selection[4] == 1 & N_selection[3] == 1): #BD
-        if N_selection[5] == 1: #BDconst
-            if N_selection[1] == 1: #ABDconst
-                if N_selection[0] == 1 & N_selection[2] == 1: #CAXBDconst
-                    N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound6})
-                else: #(ABDconst)
-                    N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound4})
-
-            else: #BDconst
-                N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound2})                
-
-        else: #no const
-            if N_selection[1] == 1: #A
-                if N_selection[0] == 1 & N_selection[2] == 1: #CAXBD
-                    N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound5})
-                else: #ABD
-                    N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound3})
-            else: #BD
-                N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound1})
+    if (N_selection[4] == 1 & N_selection[3] == 1): #bocht B and D used
+        if np.array_equal(N_selection, (0, 0, 0, 1, 1, 0)):       #BD
+            N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound1})
+        elif np.array_equal(N_selection, (0, 0, 0, 1, 1, 1)):     #BDconst
+            N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound2})
+        elif np.array_equal(N_selection, (0, 1, 0, 1, 1, 0)):     #ABD
+            N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound3})
+        elif np.array_equal(N_selection, (0, 1, 0, 1, 1, 1)):     #ABDconst
+            N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound4})
+        elif np.array_equal(N_selection, (1, 0, 0, 1, 1, 0)):     #CBD
+            N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound5})
+        elif np.array_equal(N_selection, (1, 0, 0, 1, 1, 1)):     #CBDconst
+            N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound6})
+        elif np.array_equal(N_selection, (1, 1, 1, 1, 1, 0)):     #CAXBD
+            N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound7})
+        elif np.array_equal(N_selection, (1, 1, 1, 1, 1, 1)):     #CAXBDconst
+            N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound8})
+        else:
+            N_cons = ()
         N_res = op.minimize(QUtility.CAXBD_err, x0=N_x0, args=(N_args, N_area_new), method='SLSQP', bounds=N_bounds, constraints=N_cons)
+
     else:
         N_res = op.minimize(QUtility.CAXBD_err, x0=N_x0, args=(N_args, N_area_new), method='SLSQP', bounds=N_bounds) #no constraints
     
-    # if (N_selection[4] == 1 & N_selection[3] == 1):                 #BD
-    #     if (N_selection[1] == 1 & N_selection[0] == 0):             #ABD
-    #         N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound})
-    #         N_res = op.minimize(QUtility.CAXBD_err, x0=N_x0, args=(N_args, N_area_new), method='SLSQP', bounds=N_bounds, constraints=N_cons)
+    #    if (N_selection[4] == 1 & N_selection[3] == 1): #BD
+    #     if N_selection[5] == 1: #BDconst
+    #         if N_selection[1] == 1: #ABDconst
+    #             if N_selection[0] == 1 & N_selection[2] == 1: #CAXBDconst
+    #                 N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound6})
+    #             else: #(ABDconst)
+    #                 N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound4})
+    #         elif N_selection[0] == 1:
+    #             N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound6})
+    #         else: #BDconst
+    #             N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound2})                
 
-    #     elif (N_selection[1] == 1 & N_selection[0] == 1):           #
-    #         N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound2})
-    #         N_res = op.minimize(QUtility.CAXBD_err, x0=N_x0, args=(N_args, N_area_new), method='SLSQP', bounds=N_bounds, constraints=N_cons)
-    #     else:
-    #         N_res = op.minimize(QUtility.CAXBD_err, x0=N_x0, args=(N_args, N_area_new), method='SLSQP', bounds=N_bounds)
+    #     else: #no const
+    #         if N_selection[1] == 1: #A
+    #             if N_selection[0] == 1 & N_selection[2] == 1: #CAXBD
+    #                 N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound5})
+    #             else: #ABD
+    #                 N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound3})
+    #         else: #BD
+    #             N_cons = ({'type': 'ineq', 'fun': QUtility.Nd_bound1})
+    #     N_res = op.minimize(QUtility.CAXBD_err, x0=N_x0, args=(N_args, N_area_new), method='SLSQP', bounds=N_bounds, constraints=N_cons)
     # else:
-    #     N_res = op.minimize(QUtility.CAXBD_err, x0=N_x0, args=(N_args, N_area_new), method='SLSQP', bounds=N_bounds)
+    #     N_res = op.minimize(QUtility.CAXBD_err, x0=N_x0, args=(N_args, N_area_new), method='SLSQP', bounds=N_bounds) #no constraints
 
     print(N_res)
     

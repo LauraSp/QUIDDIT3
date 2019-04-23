@@ -320,8 +320,8 @@ class MainWindow(QTclBaseWindow):
             self.prcdta = inpf.prcdta
 
             specfiles = self.prcdta.selectedfiles
-            resultfile = self.prcdta.result
-            reviewfile = self.prcdta.review
+            resultfile = self.prcdta.result + '.csv'
+            reviewfile = self.prcdta.review + '.csv'
             age = self.prcdta.age
             samplename = self.prcdta.name
 

@@ -11,3 +11,5 @@ old/*
 123QCanvasHelper_old.py
 QPlot.py
 Qtest.py
+test res.csv
+test rev.csv

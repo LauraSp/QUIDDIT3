@@ -224,12 +224,22 @@ class QUtility:
 
     @staticmethod
     def Nd_bound5(params):
-        c, a, x, b, d = params
+        c, b, d = params
         return .365*b - d
 
     @staticmethod
     def Nd_bound6(params):
-        c, a, x, b, d, const = params
+        c, b, d, const = params
+        return .365*b - d
+
+    @staticmethod
+    def Nd_bound7(params):
+        c, a, x, b, d = params
+        return .365*b - d
+
+    @staticmethod
+    def Nd_bound8(params):
+        c, a, x, b, d = params
         return .365*b - d
     
     @staticmethod
