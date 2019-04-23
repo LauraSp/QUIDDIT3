@@ -37,9 +37,12 @@ from QCanvasHelperLineResult import *
 from QCanvasHelperSingleHisto import *
 from QCanvasHelperMultiHisto import *
 from QCanvasHelperMap import *
+from QCanvasHelperQuadplot import *
 from QCanvasHelperDeconvReview import *
+from QCanvasHelperBatchPeakFitReview import *
 import QBaseline as bl
 import QGeneralDeconvolution as decon
+import QBatchPeakFit as peakfit
 
 
 class MainWindow(QTclBaseWindow):
@@ -119,6 +122,7 @@ class MainWindow(QTclBaseWindow):
         self.specs = []
         self.lineresultfile = ''
         self.historesultfile = ''
+        self.quadplotresultfile = ''
         self.twostage_inp = QTwoStageModelInp(2700, 1600, 0.82, 400, 0.2)
 
     def print_message(self, textwidget, text):
@@ -139,7 +143,7 @@ class MainWindow(QTclBaseWindow):
         self.home = QSettings.home
         self.N_comp = QSettings.N_comp
         self.file_count = self.getvar('')
-        self.github_url = 'https://github.com/LauraSp/QUIDDIT'
+        self.github_url = 'https://github.com/LauraSp/QUIDDIT3'
         self.namevar = self.getvar('')
         self.resultvar = self.getvar('')
         self.reviewvar = self.getvar('')
@@ -302,7 +306,12 @@ class MainWindow(QTclBaseWindow):
             self.set_can_helper(ch)
         
     def plot_quadplot(self):
-        pass
+        resfile_window = QAskFileWindow(self, "File Selection", 'Select result file', self.quadplotresultfile)
+        if resfile_window.dresult=='OK':
+            self.quadplotresultfile = resfile_window.sel_file
+            ch = QCanvasHelperQuadplot(self.main_canvas)
+            ch.add_map_data(self.quadplotresultfile)
+            ch.display_first()
 
     def about(self):
         QAboutWindow(self, "About QUIDDIT")
@@ -320,6 +329,10 @@ class MainWindow(QTclBaseWindow):
         peakrevinp = QReviewInpWindow(self, "Review Input", self.peakrevdta)
         if peakrevinp.dresult =='OK':
             self.peakrevdta = peakrevinp.revdta
+            ch = QCanvasHelperBatchPeakFitReview(self.main_canvas)
+            ch.add_files(peakrevinp.revdta)
+            ch.display_first()
+            self.set_can_helper(ch)
 
     def process_data(self):
         #get a new input window initialised with process inp data
@@ -364,7 +377,27 @@ class MainWindow(QTclBaseWindow):
     def peak_fit(self):
         peakinp = QPeakfitInpWindow(self, "Peak fit input", self.pkfitdta)
         if peakinp.dresult =='OK':
-            self.pkfitdta = peakinp.peakdta
+            self.pkfitdta = peakinp.pkdta
+            samplename = self.pkfitdta.name
+            resultfile = self.pkfitdta.result + '.csv'
+            specfiles = self.pkfitdta.selectedfiles
+
+            with open(resultfile, 'w') as res_fob:
+                res_fob.write('Results for sample ' + str(samplename) + ':\n')
+                res_fob.write(QUtility.peakfit_header + '\n')
+
+            i = 1
+            for specfile in specfiles:
+                self.print_message(self.message, 'Processing File {}/{}'.format(i, len(specfiles)))
+                result = peakfit.fit_peak(specfile, self.pkfitdta.peak)
+
+                with open(resultfile, 'a') as res_fob:
+                    for item in result:
+                        res_fob.write(str(item)+',')
+                    res_fob.write('\n')
+                i += 1
+            
+            self.print_message(self.message, '\nDeconvolution complete.')
 
     def man_N_fit(self):
         pass

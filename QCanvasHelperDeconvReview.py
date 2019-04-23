@@ -54,6 +54,7 @@ class QCanvasHelperDeconvReview(QCanvasHelperBase):
                         N_abs_new - N_fit,
                         'r-', label='misfit')
         sp1.set(xlim=(1400, 1000))
+        
         #self.print_message(self.message,
         #                   self.selected_items[self.index])
         #self.print_message(self.message,

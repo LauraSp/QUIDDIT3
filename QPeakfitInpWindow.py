@@ -52,7 +52,7 @@ class QPeakfitInpWindow(QTclPopupWindow):
                                             textvariable=self.resultvar)
         
         
-        self.set_entry_text(self.result_name, '[sample name] peak fit')
+        #self.set_entry_text(self.result_name, '[sample name] peak fit')
         self.makelabel(myfr, lrow=irow, lcol=2, caption='.csv', sticky=tk.W)
         
         irow += 1
