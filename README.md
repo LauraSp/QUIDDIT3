@@ -34,7 +34,7 @@ Download the QUIDDIT package from https://github.com/LauraSp/QUIDDIT and unpack 
 
 To install **Spectral Python (Spy)**, you will have to open a command window (type "cmd" into the search function in your start menu if you are on a Windows system) and navigate to the directory that contains your Python (Anaconda) installation. The Anaconda installer will ask where to install Anaconda. It will most likely be located in "C:\Program Files\Anaconda3\Scripts" or "C:\Users\[Username]\AppData\Local\Continuum\Anaconda3\Scripts" or "C:\ProgramData\Anaconda3\Scripts". You will need to use the `cd [path]` command to do so.
 
-Once you have navigated to the Scripts folder, type `pip install spectral`. Spectral Python should be installed in your system, this should only take a few minuutes. You might be prompted to enter your password during installation.
+Once you have navigated to the Scripts folder, type `pip install spectral`. Spectral Python should be installed in your system, this should only take a few minutes. You might be prompted to enter your password during installation.
 
 
 ### Running QUIDDIT
