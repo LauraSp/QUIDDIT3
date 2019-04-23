@@ -38,7 +38,7 @@ Once you have navigated to the Scripts folder, type `pip install spectral`. Spec
 
 
 ### Running QUIDDIT
-To run QUIDDIT, open your python IDE of choice and find and run the **"QUIDDIT GUI"** file in the downloaded repository (you may need to unzip the files in the repository first). The GUI can also be run using IDLE (a very basic standard Python IDE) or from the command line.
+To run QUIDDIT, open your python IDE of choice and find and run the **"QMainWindow"** file in the downloaded repository (you may need to unzip the files in the repository first). The GUI can also be run using IDLE (a very basic standard Python IDE) or from the command line.
 
 If you are using Anaconda, start **Spyder** (either directly from the start menu if you are on a Windows system or by starting the Anaconda Navigator first and then selecting "Launch Spyder"). Spyder may take a few minutes to start. Once it is finished, you can open the QUIDDIT script by selecting "File", then "Open..." from the start menu or by clicking the "Open File" icon. Navigate to the QUIDDIT folder you have downloaded and unzipped and select the file "QUIDDIT_GUI.py". This is usually the only file you will have to open. To run the script, select "Run", then "Run" from the top or the single green arrow icon or hit the F5 key. If this is the first time you are running a script, you might be asked to agree to some run settings. You can confirm the defaults by clicking "Ok".
 
@@ -46,7 +46,6 @@ If you are using Anaconda, start **Spyder** (either directly from the start menu
 This section provides an overview over known issues with QUIDDIT in order of priority. The author is working on resolving them but no guarantee can be given at what point they will be fixed.
 
 * Results of spectra that contain the C-centre currently can't be plotted
-* Empty, additional pop-up window prompted with "Settings" and "User Input" (in data processing)
 * Review only works if selected spectra match the content of the review file completely
 * moving the cursor to the diagram frame sometimes leads to flickering of the window because displaying x-y-data at the bottom changes sizing. This can be avoided by making the window bigger.
 
