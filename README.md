@@ -46,7 +46,9 @@ If you are using Anaconda, start **Spyder** (either directly from the start menu
 This section provides an overview over known issues with QUIDDIT in order of priority. The author is working on resolving them but no guarantee can be given at what point they will be fixed.
 
 * Review only works if selected spectra match the content of the review file completely
-* moving the cursor to the diagram frame sometimes leads to flickering of the window because displaying x-y-data at the bottom changes sizing. This can be avoided by making the window bigger.
+* moving the cursor to the diagram frame sometimes leads to flickering of the window because displaying x-y-data at the bottom changes 
+sizing. (Note: This can be avoided by making the window bigger)
+* quadplot looks ugly
 
 ## Contact:
 For further questions or suggestions, please contact
