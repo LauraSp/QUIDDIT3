@@ -26,7 +26,7 @@ class QTclWindowBasics:
 
         return label
 
-    def maketext(self, parent=None, lcol=0, lrow=0, erow=0, ecol=1, cspan=1, rspan=1, caption='', width=None, **options):
+    def maketext(self, parent=None, lcol=0, lrow=0, erow=0, ecol=1, cspan=1, rspan=1, caption='', width=None, padx=(0,0), pady=(0,0), **options):
         """create a multiple single line text widget with a label/caption in another column
         """
         p = self if parent == None else parent
@@ -35,7 +35,7 @@ class QTclWindowBasics:
         if width:
             entry.config(width=width)
     
-        entry.grid(row=erow, column=ecol, sticky=tk.W)
+        entry.grid(row=erow, column=ecol, sticky=tk.W, padx=padx, pady=pady)
         return entry
 
     def makeentry(self, parent=None, lcol=0, lrow=0, erow=0, ecol=1, caption='', width=None, **options):

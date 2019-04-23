@@ -5,3 +5,4 @@ import tkinter.filedialog as fd
 from QAllExceptions import *
 from QTclBaseWindow import *
 from QTclPopupWindow import *
+from QTclMessageWindow import *
