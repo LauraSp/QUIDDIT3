@@ -122,6 +122,14 @@ class QTclWindowBasics:
         cb.grid(row=erow, column=ecol, rowspan=rspan, columnspan=cspan, sticky=sticky)
         return cb
 
+    def makeradio(self, parent=None, ecol=0, erow=0, cspan=1, rspan=2, caption='RadioButton',
+                    width=None, sticky=tk.W, padx=(0,0), pady=(0,0), variable=None, value=0):
+        p = self if parent == None else parent
+        rb = tk.Radiobutton(p, text=caption, variable=variable, value=value)
+        rb.grid(row=erow, column=ecol, padx=padx, pady=pady, sticky=sticky)
+        return rb
+
+
     def makebutton(self, parent=None, erow=0, ecol=0, cspan=1, rspan=1, caption='Button', 
                    width=None, cmd=None, sticky=tk.W, padx=(0,0), pady=(0,0),**options):
         """create a button widget"""

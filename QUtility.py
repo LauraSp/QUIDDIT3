@@ -33,7 +33,7 @@ class QUtility:
     @staticmethod
     def inter(spectrum, wav_new, inttype='linear'):
         """returns interpolated spectrum"""
-        spec_interp = interpolate.interp1d(spectrum[:,0],spectrum[:,1], kind=inttype, bounds_error=False, fill_value=0)
+        spec_interp = interpolate.interp1d(spectrum[:,0], spectrum[:,1], kind=inttype, bounds_error=False, fill_value=0)
         return spec_interp(wav_new)
     
     @staticmethod

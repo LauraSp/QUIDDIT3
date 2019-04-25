@@ -31,6 +31,7 @@ class QCanvasHelperLineResult(QCanvasHelperBase):
                 xticklabels=[])
 
         sp4 = fig.add_subplot(334)
+        sp4.plot(points, self.data['[NC]'], '.', label='$\mathregular{[N_C]}$')
         sp4.plot(points, self.data['[NA]'], '.', label='$\mathregular{[N_A]}$')
         sp4.plot(points, self.data['[NB]'], '.', label='$\mathregular{[N_B]}$')
         sp4.plot(points, self.data['[NT]'], '.', label='$\mathregular{[N_t]}$')

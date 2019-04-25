@@ -22,7 +22,7 @@ class QSettings:
         userhome = str(Path.home())
 
         version = '3.0-alpha'
-        github_url = 'https://github.com/LauraSp/QUIDDIT'
+        github_url = 'https://github.com/LauraSp/QUIDDIT3'
         
         #path to file with standard spectra of N components (CSV)
         std_path = os.getcwd() + '/CAXBD.csv'

@@ -1,4 +1,3 @@
-
 from QImpWindowBasics import *
 from QSettings import *
 

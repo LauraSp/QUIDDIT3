@@ -31,6 +31,7 @@ from QPlotMapInpWindow import *
 from QBaselineSubtrWindow import *
 from QUserSettingsWindow import *
 from QTwostageModelWindow import *
+from QManualNFitWindow import *
 from QSettings import *
 from QCanvasHelperSpectrum import *
 from QCanvasHelperLineResult import *
@@ -43,6 +44,7 @@ from QCanvasHelperBatchPeakFitReview import *
 import QBaseline as bl
 import QGeneralDeconvolution as decon
 import QBatchPeakFit as peakfit
+import QENVIconversion as envicon
 
 
 class MainWindow(QTclBaseWindow):
@@ -81,20 +83,19 @@ class MainWindow(QTclBaseWindow):
 
         toolbar_frame = tk.Frame(self)
         toolbar_frame.grid(row=row, column=1, sticky=tk.W)
-        #Papi: den habe ich nicht self.toolbar = NavigationToolbar2TkAgg(self.main_canvas, toolbar_frame)
+
         self.toolbar = NavigationToolbar2Tk(self.main_canvas, toolbar_frame)
-        #self.position = 0
 
         self.back_button = self.makebutton(erow=row, ecol=0, caption='Previous',
                                            cmd=self.display_prev,
-                                           state=tk.DISABLED, padx=5, pady=5)
+                                           state=tk.DISABLED, padx=5, pady=5, sticky=tk.W)
         self.next_button = self.makebutton(erow=row, ecol=3, caption='Next',
                                            cmd=self.display_next,
-                                           state=tk.DISABLED, padx=5, pady=5, sticky='e')
+                                           state=tk.DISABLED, padx=5, pady=5, sticky=tk.E)
 
         self.histo_button = self.makebutton(erow=row, ecol=2, caption='Histogram',
                                            cmd=self.histo_popup,
-                                           state=tk.DISABLED, padx=5, pady=5, sticky='e')
+                                           state=tk.DISABLED, padx=5, pady=5, sticky=tk.E)
 
         for i in range(row):
             self.rowconfigure(i, weight=1, pad=5)
@@ -124,6 +125,7 @@ class MainWindow(QTclBaseWindow):
         self.historesultfile = ''
         self.quadplotresultfile = ''
         self.twostage_inp = QTwoStageModelInp(2700, 1600, 0.82, 400, 0.2)
+        self.manualfit_files = []
 
     def print_message(self, textwidget, text):
         """print text to textwidget
@@ -177,7 +179,8 @@ class MainWindow(QTclBaseWindow):
         self.make_menu(menubar, 'Baseline', baselinemenuopt)
 
         procmenuopt = {'General Deconvolution':self.process_data,
-                       'Batch Peak Fit': self.peak_fit}
+                       'Batch Peak Fit': self.peak_fit,
+                       'Diamond type': self.diamondtype}
         self.make_menu(menubar, 'Process', procmenuopt)
 
         revmenuopt = {'Review General Deconvolution':self.review_deconv,
@@ -212,7 +215,14 @@ class MainWindow(QTclBaseWindow):
 
     
     def convert_ENVI(self):
-        QENVIconversionWindow(self, "ENVI Conversion", self.convenvidta)
+        enviwindow = QENVIconversionWindow(self, "ENVI Conversion", self.convenvidta)
+        if enviwindow.dresult == 'OK':
+            self.convenvidta = enviwindow.convdta
+            self.print_message(self.message,
+                            'converting ENVI to CSV. Files will be stored here: {}\nn'.format(self.convenvidta.targetdir))
+            conv = envicon.QENVIconverter(self.convenvidta)
+            conv.convert()
+            self.print_message(self.message, 'Conversion complete.\n')
 
     def change_user_settings(self):
         QUserSettingsWindow(mw, "User settings")
@@ -399,11 +409,15 @@ class MainWindow(QTclBaseWindow):
             
             self.print_message(self.message, '\nDeconvolution complete.')
 
-    def man_N_fit(self):
+    def diamondtype(self):
         pass
+
+    def man_N_fit(self):
+        QManualNFitWindow(self, 'Manual N fit', self.manualfit_files)
+
         
     def man_peakfit(self):
-        pass
+        QManualPeakFitWindow(self, 'Manual Peak fit', self.manualfit_files)
 
     def twostage_model(self):
         QTwostageModelWindow(self, 'Two-stage nitrogen aggregation model', self.twostage_inp)
