@@ -32,6 +32,8 @@ from QBaselineSubtrWindow import *
 from QUserSettingsWindow import *
 from QTwostageModelWindow import *
 from QManualNFitWindow import *
+from QManualPeakFitWindow import *
+from QDiamondTypeWindow import *
 from QSettings import *
 from QCanvasHelperSpectrum import *
 from QCanvasHelperLineResult import *
@@ -45,6 +47,7 @@ import QBaseline as bl
 import QGeneralDeconvolution as decon
 import QBatchPeakFit as peakfit
 import QENVIconversion as envicon
+import QDiamondType as diatp
 
 
 class MainWindow(QTclBaseWindow):
@@ -55,8 +58,6 @@ class MainWindow(QTclBaseWindow):
         """
         self.canhelper = None
         self.setwintitle(title)
-
-        #self.set_defaults()
 
         #Making the main menu
         menubar = self.create_menu_bar()
@@ -120,6 +121,7 @@ class MainWindow(QTclBaseWindow):
         self.revdta = QReviewInp([], '')
         self.peakrevdta = QReviewInp([], '')
         self.mapinp = QPlotMapInp('', QSettings.MAPCLIMS)
+        self.diatypedta = QDiamondTypeInp('', [], '', 0)
         self.specs = []
         self.lineresultfile = ''
         self.historesultfile = ''
@@ -134,31 +136,6 @@ class MainWindow(QTclBaseWindow):
         textwidget.insert('end', text+'\n')
         textwidget['state'] = 'disabled'
         textwidget.see('end')
-
-    #Papi: Was ist das?
-    #def restore_defaults(variables):
-    #   for var in variables:
-    
-    def set_defaults(self):
-        """Set all the defaults
-        """
-        self.home = QSettings.home
-        self.N_comp = QSettings.N_comp
-        self.file_count = self.getvar('')
-        self.github_url = 'https://github.com/LauraSp/QUIDDIT3'
-        self.namevar = self.getvar('')
-        self.resultvar = self.getvar('')
-        self.reviewvar = self.getvar('')
-        self.agevar = self.getvar(2900)
-        self.peakvar = self.getvar(3107.0)
-        self.c_NT_var = self.getvar(0.)
-        self.r_NT_var = self.getvar(0.)
-        self.c_agg_var = self.getvar(0.)
-        self.r_agg_var = self.getvar(0.)
-        self.plotmode = self.getvar('')
-        self.minvar = self.getvar(0.)
-        self.maxvar = self.getvar(1.)
-        self.peak = self.getvar(0)
 
 
     def create_menu_bar(self):
@@ -409,8 +386,29 @@ class MainWindow(QTclBaseWindow):
             
             self.print_message(self.message, '\nDeconvolution complete.')
 
+
     def diamondtype(self):
-        pass
+        diatype_window = QDiamondTypeWindow(self, "Diamond Type Determination", self.diatypedta)
+        if diatype_window.dresult == 'OK':
+            self.diatypedta = diatype_window.typedta
+            spectra = self.diatypedta.selectedfiles
+            save = False if self.diatypedta.savevar.get() == 0 else True
+            outpath = self.diatypedta.savedir
+
+            resultfile = QSettings.home + '\\' + self.diatypedta.result + '.csv'
+            with open(resultfile, 'w') as res_fob:
+                res_fob.write('name, type, note\n') 
+
+            i=1
+            for filename in spectra:
+                diamondtype, warn = diatp.diamondtype(filename, save, outpath=outpath)
+                note = 'ok' if warn == '' else warn
+                self.print_message(self.message, 'Processing file {}/{}: {}'.format(i, len(spectra), filename))
+                self.print_message(self.message, 'type: {}\nnote: {}\n'.format(diamondtype, note))
+                with open(resultfile, 'a') as res_fob:
+                    res_fob.write('{}, {}, {}\n'.format(filename, diamondtype, warn))
+                i += 1
+
 
     def man_N_fit(self):
         QManualNFitWindow(self, 'Manual N fit', self.manualfit_files)
@@ -419,10 +417,12 @@ class MainWindow(QTclBaseWindow):
     def man_peakfit(self):
         QManualPeakFitWindow(self, 'Manual Peak fit', self.manualfit_files)
 
+
     def twostage_model(self):
         QTwostageModelWindow(self, 'Two-stage nitrogen aggregation model', self.twostage_inp)
-         
+
+
 if __name__ == '__main__':
-    mw = MainWindow("QUIDDIT version 2.0")
+    mw = MainWindow("QUIDDIT version {}".format(QSettings.version))
     mw.mainloop()
    

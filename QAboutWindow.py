@@ -16,7 +16,7 @@ class QAboutWindow(QTclPopupWindow):
         self.myimg = tk.PhotoImage(file=QSettings.home + '\\QUIDDITlogo.gif')
         self.makeimagelabel(img=self.myimg)
 
-        about_msg = 'version {}\n(Laura Speich, 10/2017)\n\nlaura.speich@bristol.ac.uk\n\n'.format(str(QSettings.version))
+        about_msg = 'version {}\n(Laura Speich, 10/2017-05/2019)\n\nlaura.speich@bristol.ac.uk\n\n'.format(str(QSettings.version))
         
         self.makelabel(lrow=1, caption=about_msg, sticky=tk.NSEW)
         #self.makebutton(2,0, caption="Dismiss", cmd=self.destroy, sticky=tk.NSEW, height=1, width=6, default='active')

@@ -115,11 +115,11 @@ class QTclWindowBasics:
         entry.delete(0, tk.END)
         entry.insert(tk.END, text)
 
-    def makecheck(self, parent=None, ecol=0, erow=0, rspan=1, cspan=1, caption='', sticky=tk.W, **options):
+    def makecheck(self, parent=None, ecol=0, erow=0, rspan=1, cspan=1, caption='', sticky=tk.W, padx=(0,0), pady=(0,0), **options):
         """create a checkbox with a label"""
         p = self if parent == None else parent
         cb = tk.Checkbutton(p, text=caption, **options)
-        cb.grid(row=erow, column=ecol, rowspan=rspan, columnspan=cspan, sticky=sticky)
+        cb.grid(row=erow, column=ecol, rowspan=rspan, columnspan=cspan, sticky=sticky, padx=padx, pady=pady)
         return cb
 
     def makeradio(self, parent=None, ecol=0, erow=0, cspan=1, rspan=2, caption='RadioButton',

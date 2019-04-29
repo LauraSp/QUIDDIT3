@@ -26,16 +26,12 @@ class QPeakfitInpWindow(QTclPopupWindow):
 
         row = 0
         myfr = self.make_label_frame(caption='Please enter data for peak fitting', cspan=2, padx=(5,5), pady=(5,5))
-        #tk.Label(self,
-        #         text='Please enter data for peak fitting').grid(row=row, column=0, columnspan=3, sticky='w')
         
         irow = 0
         self.sample_name = self.makeentry(myfr, lrow=irow, erow=irow,
                                             caption="Sample name",
                                             width=24,
                                             textvariable=self.namevar)
-        #self.sample_name.bind('<Tab>', self.on_input2)
-        #self.sample_name.focus_force()
 
         irow += 1 
         self.selected_peak = self.makeentry(myfr, lrow=irow, erow=irow,
@@ -43,7 +39,6 @@ class QPeakfitInpWindow(QTclPopupWindow):
                                                    width=24,
                                                    textvariable=self.peakvar)
         self.makelabel(myfr, lrow=irow, lcol=2, caption='(cm-1)', sticky=tk.W)
-        #self.selected_peak.bind('<Tab>', self.on_input2)
 
         irow += 1
         self.result_name = self.makeentry(myfr, erow=irow, lrow=irow,
@@ -51,8 +46,6 @@ class QPeakfitInpWindow(QTclPopupWindow):
                                             width=24,
                                             textvariable=self.resultvar)
         
-        
-        #self.set_entry_text(self.result_name, '[sample name] peak fit')
         self.makelabel(myfr, lrow=irow, lcol=2, caption='.csv', sticky=tk.W)
         
         irow += 1
