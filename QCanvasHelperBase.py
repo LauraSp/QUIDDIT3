@@ -48,4 +48,5 @@ class QCanvasHelperBase:
         for ax in fig.get_axes():
             fig.delaxes(ax)
 
+
         fig.suptitle("QUIDDIT")

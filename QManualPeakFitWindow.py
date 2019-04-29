@@ -17,7 +17,7 @@ class QManualPeakFitWindow(QTclPopupWindow):
     def make_gui(self, title):
         self.setwintitle(title)
 
-        self.age = self.getvar(2700.)
+        self.peak = self.getvar(3107.)
 
         w = 24
         row = 0
@@ -27,6 +27,10 @@ class QManualPeakFitWindow(QTclPopupWindow):
         self.specfileentry = self.makeentry(filefr, lrow=irow, erow=irow, ecol=1, caption='Spectra:', width=w)
         self.makebutton(filefr, erow=irow, ecol=2, caption='...', cmd=self.get_files, sticky=tk.E, padx=(0,5), pady=(0,5))
         self.set_file_num()
+
+        irow += 1
+        self.peakentry = self.makeentry(filefr, lrow=irow, erow=irow, caption = 'Peak:', textvariable=self.peak)
+        self.makelabel(filefr, lrow=irow, lcol=2, caption='(cm-1)')
 
         irow += 1
         self.loadbu = self.makebutton(filefr, erow=irow, ecol=0, caption='Load', sticky=tk.E, cmd=self.load_data, padx=(5,5), pady=(5,5))
@@ -62,7 +66,7 @@ class QManualPeakFitWindow(QTclPopupWindow):
 
 
     def load_data(self):
-        self.canhelper.add_data(self.specfiles, self.age)
+        self.canhelper.add_data(self.specfiles, self.peak)
         self.canhelper.display_first()
 
 

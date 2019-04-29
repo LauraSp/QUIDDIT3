@@ -110,7 +110,7 @@ class QCanvasHelperManualNFit(QCanvasHelperBase):
         resetax = fig.add_axes([0.8, 0.025, 0.1, 0.04])
 
         self.reset_button = mplButton(resetax, 'Reset', color=axcolor, hovercolor='0.975')
-        self.reset_button.on_clicked( lambda event, arg=self.sliders: self.widget_reset(event, arg))
+        self.reset_button.on_clicked(lambda event, arg=self.sliders: self.widget_reset(event, arg))
 
         self.canv.draw()
 
@@ -161,5 +161,12 @@ class QCanvasHelperManualNFit(QCanvasHelperBase):
         
         self.l.set_ydata(QUtility.CAXBD(factors, self.all_comp))
         self.l2.set_ydata(QUtility.CAXBD(factors, self.all_comp)-self.fit_area_inter)
-        #self.fig_text.
         self.fig_text.set(text='[NC]: {}\n[NA]: {}\n[NB]: {}\n%B.: {}\nT: {}C \nmax D: {}'.format(N_c, N_a, N_b, IaB, T, np.round(B*0.365, 2)))
+
+    def clear_plot(self):
+        try:
+            self.fig_text.remove()
+        except AttributeError:
+            pass
+        finally:
+            super().clear_plot()
