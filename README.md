@@ -1,6 +1,8 @@
 # QUIDDIT 3
 QUantification of Infrared active Defects in Diamond and Inferred Temperatures
 
+Themost recent version (v. 3) is easier to use, more manageable and expandable and comes with improved exception handling. See below for list of pending and completed tasks.
+
 **license:** You are free to download and use QUIDDIT and all its components.
 
 ## Download
@@ -49,8 +51,36 @@ This section provides an overview over known issues with QUIDDIT in order of pri
 * moving the cursor to the diagram frame sometimes leads to flickering of the window because displaying x-y-data at the bottom changes 
 sizing. (Note: This can be avoided by making the window bigger)
 * quadplot looks ugly
+* ENVI conversion will cause error if "byte order" keyword is not found in header file
+* Manual fitting: Sliders inactive if parameter not used in initial fit (e.g. the user can't use the "constant" slider if a constant wasn't added in the initial fit)
+
+## Tasks
+### Improving user/developer experience
+- [x] Split up main file (aka "the god file") into more managable blocks
+- [x] Improve layout of windows
+- [ ] Improve exception handling
+- [ ] Manual peak fitting with baseline correction
+
+
+### New features
+- [x] Determine diamond type (beta! Use with care)
+- [x] Converting ENVI files to CSV
+- [x] Batch Peak fitting with output
+- [x] Batch Peak fitting Review
+- [x] 2-stage N aggregation modelling with file output
+- [x] Quadplot
+- [x] Manual N fitting
+- [x] Manual Peak fitting
+- [ ] Custom baseline correction (e.g. allow 1st or 2nd order polynomial instead of just 3rd order polynomial)
 
 ## Contact:
 For further questions or suggestions, please contact
 
 Laura Speich: laura.speich@bristol.ac.uk (ls1394@my.bristol.ac.uk)
+
+## See also:
+[Manual.pdf](https://github.com/LauraSp/QUIDDIT3/blob/master/Manual.pdf)
+
+[QUIDDIT on Researchgate](https://www.researchgate.net/project/QUIDDIT-a-software-tool-for-automated-processing-of-diamond-IR-spectra)
+
+
