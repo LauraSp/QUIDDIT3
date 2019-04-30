@@ -6,7 +6,7 @@ Themost recent version (v. 3) is easier to use, more manageable and expandable a
 **license:** You are free to download and use QUIDDIT and all its components.
 
 ## Download
-Help us by letting us know if you have downloaded QUIDDIT! Even if you don't end up using it, please let us know (you can email laura.speich@bristol.ac.uk). Thank you!
+**Help us** by letting us know if you have downloaded QUIDDIT! Even if you don't end up using it, please let us know (you can email laura.speich@bristol.ac.uk). Thank you!
 
 All necessary files can be downloaded by visiting the following website:
 https://github.com/LauraSp/QUIDDIT
@@ -18,25 +18,27 @@ This includes commented Jupyter Notebooks documenting the baseline correction an
 In order to run QUIDDIT, you will need a working version of **Python 3**.
 
 I recommend installing an integrated development environment (IDE) that includes the most commonly used libraries. To run QUIDDIT, you will need:
-* SciPy (https://www.scipy.org/)
-* NumPy (http://www.numpy.org/)
-* matplotlib (https://matplotlib.org/)
-* Tkinter (https://docs.python.org/2/library/tk.html)
-* webbrowser (https://docs.python.org/2/library/webbrowser.html)
-* Spectral Python (Spy) (http://www.spectralpython.net/)
+* [SciPy](https://www.scipy.org/)
+* [NumPy](http://www.numpy.org/)
+* [matplotlib](https://matplotlib.org/)
+* [Tkinter](https://docs.python.org/2/library/tk.html)
+* [webbrowser](https://docs.python.org/2/library/webbrowser.html)
+* [Spectral Python (Spy)](http://www.spectralpython.net/)
 
 All of these are part of the most common IDE for Python. The instructions in the manual were created for use with Spyder (which is part of the Anaconda package), so I recommend installing Anaconda and running scripts with Spyder for users not familiar with coding.
 
-To install Anaconda, visit https://www.anaconda.com/download/
+To install Anaconda, visit [downlaod anaconda](https://www.anaconda.com/)download/
 
 Chose your operating system and follow the on-screen instructions.
 
 ### Install QUIDDIT
-Download the QUIDDIT package from https://github.com/LauraSp/QUIDDIT and unpack the zip file. (To download, select "Clone or download" on the repository website)
+Download the **QUIDDIT** package from [GitHub](https://github.com/LauraSp/QUIDDIT) and unpack the zip file. (To download, select "Clone or download" on the repository website)
 
 To install **Spectral Python (Spy)**, you will have to open a command window (type "cmd" into the search function in your start menu if you are on a Windows system) and navigate to the directory that contains your Python (Anaconda) installation. The Anaconda installer will ask where to install Anaconda. It will most likely be located in "C:\Program Files\Anaconda3\Scripts" or "C:\Users\[Username]\AppData\Local\Continuum\Anaconda3\Scripts" or "C:\ProgramData\Anaconda3\Scripts". You will need to use the `cd [path]` command to do so.
 
 Once you have navigated to the Scripts folder, type `pip install spectral`. Spectral Python should be installed in your system, this should only take a few minutes. You might be prompted to enter your password during installation.
+
+Detailed instructions for the installation of spectral can be found [here](http://www.spectralpython.net/installation.html).
 
 
 ### Running QUIDDIT
@@ -54,7 +56,7 @@ sizing. (Note: This can be avoided by making the window bigger)
 * ENVI conversion will cause error if "byte order" keyword is not found in header file
 * Manual fitting: Sliders inactive if parameter not used in initial fit (e.g. the user can't use the "constant" slider if a constant wasn't added in the initial fit)
 
-## Tasks
+## Tasks (version 3)
 ### Improving user/developer experience
 - [x] Split up main file (aka "the god file") into more managable blocks
 - [x] Improve layout of windows
