@@ -12,8 +12,8 @@ class QENVIconverter:
     def convert(self):
         with open(self.hdr, 'r+') as hdr:
             bo_found = any('byte order' in line for line in hdr)
-            if not bo_found:
-                self.add_byteorder()
+            #if not bo_found:
+            #    self.add_byteorder()
                 
         #try:
         envi_img = envi.open(self.hdr, self.dat)
@@ -36,15 +36,15 @@ class QENVIconverter:
                 fname = 'X{} Y{}.CSV'.format(str(np.round(x, 6)), str(np.round(y, 6)))
                 np.savetxt((self.targetdir + '/' + fname), spectrum, delimiter=',')
 
-    def add_byteorder(self):
-        endianness = sys.byteorder
-        curr_bo = 0 if endianness is 'little' else 1
-        bo_window = QAskByteOrderWindow(self, 'Error. Byte order not found.', curr_bo)
-        if bo_window.dresult == 'OK':
-            bo = bo_window.byte_order
-            hdr = open(self.hdr, 'a+')
-            hdr.write('byte order = {}\n'.format(bo))
-            hdr.close()
+    #def add_byteorder(self):
+    #    endianness = sys.byteorder
+    #    curr_bo = 0 if endianness is 'little' else 1
+    #    bo_window = QAskByteOrderWindow(self, 'Error. Byte order not found.', curr_bo)
+    #    if bo_window.dresult == 'OK':
+    #        bo = bo_window.byte_order
+    #        hdr = open(self.hdr, 'a+')
+    #        hdr.write('byte order = {}\n'.format(bo))
+    #        hdr.close()
 
 class QAskByteOrderWindow(QTclPopupWindow):
     def __init__(self, parent, title, byte_order, is_modal=True):

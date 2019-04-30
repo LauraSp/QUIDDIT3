@@ -197,9 +197,14 @@ class MainWindow(QTclBaseWindow):
             self.convenvidta = enviwindow.convdta
             self.print_message(self.message,
                             'converting ENVI to CSV. Files will be stored here: {}\nn'.format(self.convenvidta.targetdir))
-            conv = envicon.QENVIconverter(self.convenvidta)
-            conv.convert()
-            self.print_message(self.message, 'Conversion complete.\n')
+            try:
+                conv = envicon.QENVIconverter(self.convenvidta)
+                conv.convert()
+                self.print_message(self.message, 'Conversion complete.\n')
+            except Exception as e:
+                mwin = QTclMessageWindow(mw, "QUODDIT Error", "An unhandled error has occured", 
+                "The original message was: {}".format(str(e)),
+                 e)
 
     def change_user_settings(self):
         QUserSettingsWindow(mw, "User settings")
