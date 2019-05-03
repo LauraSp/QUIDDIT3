@@ -23,6 +23,7 @@ from QHistogramWindow import *
 from QAboutWindow import *
 from QAskSpectraWindow import *
 from QAskFileWindow import *
+from QAskENVIWindow import *
 from QENVIconversionWindow import *
 from QProcessDtaInpWindow import *
 from QPeakfitInpWindow import *
@@ -43,6 +44,7 @@ from QCanvasHelperMap import *
 from QCanvasHelperQuadplot import *
 from QCanvasHelperDeconvReview import *
 from QCanvasHelperBatchPeakFitReview import *
+from QCanvasHelperPlotENVI import *
 import QBaseline as bl
 import QGeneralDeconvolution as decon
 import QBatchPeakFit as peakfit
@@ -117,6 +119,7 @@ class MainWindow(QTclBaseWindow):
         self.prcdta = QProcessDtaInp('','','',2900,[])
         self.pkfitdta = QPeakfitInp('', 3107., '', [])
         self.convenvidta = QENVIconversionInp('','','')
+        self.plotenvidata = QENVIInp('', '')
         self.bldata = QBaselineSubtrInp([], '')
         self.revdta = QReviewInp([], '')
         self.peakrevdta = QReviewInp([], '')
@@ -144,6 +147,7 @@ class MainWindow(QTclBaseWindow):
         menubar = tk.Menu(self)
         filemenuopt = {'Convert ENVI file...':self.convert_ENVI,
                         'Open spectra':self.plot_spectra,
+                        'Open ENVI': self.plot_ENVI,
                        'Exit':self.click_exit}
         filemenu = self.make_menu(menubar, 'File', filemenuopt)
         filemenu.insert_separator(1)
@@ -202,7 +206,7 @@ class MainWindow(QTclBaseWindow):
                 conv.convert()
                 self.print_message(self.message, 'Conversion complete.\n')
             except Exception as e:
-                mwin = QTclMessageWindow(mw, "QUODDIT Error", "An unhandled error has occured", 
+                mwin = QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
                 "The original message was: {}".format(str(e)),
                  e)
 
@@ -218,7 +222,7 @@ class MainWindow(QTclBaseWindow):
             if mwin.dresult == 'OK':
                 self.root.destroy()
         except Exception as e:
-            mwin = QTclMessageWindow(mw, "QUODDIT Error", "An unhandled error has occured", 
+            mwin = QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
                 "The original message was: {}".format(str(e)),
                  e)
 
@@ -299,11 +303,20 @@ class MainWindow(QTclBaseWindow):
         
     def plot_quadplot(self):
         resfile_window = QAskFileWindow(self, "File Selection", 'Select result file', self.quadplotresultfile)
-        if resfile_window.dresult=='OK':
+        if resfile_window.dresult == 'OK':
             self.quadplotresultfile = resfile_window.sel_file
             ch = QCanvasHelperQuadplot(self.main_canvas)
             ch.add_map_data(self.quadplotresultfile)
             ch.display_first()
+
+    def plot_ENVI(self):
+        envifiles_window = QAskENVIWindow(self, "File Selection", self.plotenvidata)
+        if envifiles_window.dresult == 'OK':
+            self.plotenvidata = envifiles_window.envidta
+            ch = QCanvasHelperPlotENVI(self.main_canvas)
+            ch.add_files(self.plotenvidata.hdr, self.plotenvidata.dat)
+            ch.display_first()
+            self.set_can_helper(ch)
 
     def about(self):
         QAboutWindow(self, "About QUIDDIT")

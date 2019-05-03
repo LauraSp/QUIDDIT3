@@ -47,6 +47,8 @@ class QSettings:
         #              1)
 
         #*this set of parameters is only used when the first attempt of fitting fails.
+        ENVIITEMS = (1992, 1360, 1344, 1282, 1170, 1130)
+
 
         PLOTITEMS = ('$[N_T]$ (ppm)',
             '$[N_A]$ (ppm)',

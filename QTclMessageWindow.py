@@ -22,7 +22,7 @@ class QTclMessageWindow(QTclPopupWindow):
 
         row = 0
         titlab = self.makelabel(caption=self.user_title, sticky=tk.W, cspan = 2, padx=(5,5), pady=(5,5))
-        titlab.configure(font=("TkCaptionFont", 18))
+        titlab.configure(font=("TkCaptionFont", 16))
         row += 1
         self.makelabel(lrow=row, caption=self.user_message, cspan = 2, sticky=tk.W,padx=(5,5), pady=(0,5))
         row += 1        
