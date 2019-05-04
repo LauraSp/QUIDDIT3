@@ -37,7 +37,7 @@ class QCanvasHelperManualPeakFit(QCanvasHelperBase):
 
         sp = fig.add_subplot(111)
         sp.invert_xaxis()
-        fig.subplots_adjust(left=0.25, bottom=0.4)
+        fig.subplots_adjust(left=0.2, bottom=0.4, right=0.85)
 
         sp.plot(fit_area[:,0], fit_area[:,1], 'k.', label='data')
         self.l, = sp.plot(self.wav_new, fit, 'g-')
@@ -46,32 +46,49 @@ class QCanvasHelperManualPeakFit(QCanvasHelperBase):
 
         axcolor = 'lightgoldenrodyellow'
             
-        ax_const = fig.add_axes([0.25, 0.35, 0.65, 0.03], facecolor=axcolor)
-        ax_x0 = fig.add_axes([0.25, 0.3, 0.65, 0.03], facecolor=axcolor)
-        ax_I = fig.add_axes([0.25, 0.25, 0.65, 0.03], facecolor=axcolor)
-        ax_HWHM_l = fig.add_axes([0.25, 0.2, 0.65, 0.03], facecolor=axcolor)
-        ax_HWHM_r = fig.add_axes([0.25, 0.15, 0.65, 0.03], facecolor=axcolor)
-        ax_sigma = fig.add_axes([0.25, 0.1, 0.65, 0.03], facecolor=axcolor)
-            
+        sxpos = 0.2
+        sypos = 0.3
+        sydelta = -0.04
+        swidth = 0.65
+        sheight = 0.03
+        #create the constant slider(s)
+        self.s_const, self.s_const_text, self.s_const10 = self.create_slider(fig, 
+            caption="const.",
+            ypos=sypos, width=swidth, height=sheight,
+            minvalue=fit_res.x[-1]*0.4, maxvalue=fit_res.x[-1]*1.6, initialvalue=fit_res.x[-1],
+            hastenth=True,
+            onchange=self.widget_update)
+        sypos += sydelta
+
+        ax_x0 = fig.add_axes([sxpos, sypos, swidth, sheight], facecolor=axcolor)
+        sypos += sydelta
+        ax_I = fig.add_axes([sxpos, sypos, swidth, sheight], facecolor=axcolor)
+        sypos += sydelta
+        ax_HWHM_l = fig.add_axes([sxpos, sypos, swidth, sheight], facecolor=axcolor)
+        sypos += sydelta
+        ax_HWHM_r = fig.add_axes([sxpos, sypos, swidth, sheight], facecolor=axcolor)
+        sypos += sydelta
+        ax_sigma = fig.add_axes([sxpos, sypos, swidth, sheight], facecolor=axcolor)
+        sypos += 2 * sydelta
+        
         self.s_x0 = Slider(ax_x0, 'peak pos.', pos_guess-3, pos_guess+3, valinit=fit_res.x[0], valfmt='%1.1f')
         self.s_I = Slider(ax_I, 'peak height', 0, fit_res.x[1]+fit_res.x[1]*0.25, valinit=fit_res.x[1], valfmt='%1.1f')
         self.s_HWHM_l = Slider(ax_HWHM_l, 'l. half width', 0, fit_res.x[2]*3, valinit=fit_res.x[2], valfmt='%1.1f')
         self.s_HWHM_r = Slider(ax_HWHM_r, 'r. half width', 0, fit_res.x[3]*3, valinit=fit_res.x[3], valfmt='%1.1f')
         self.s_sigma = Slider(ax_sigma, 'Lorentz. contr.', 0, 1, valinit = fit_res.x[4], valfmt='%1.1f')
-        self.s_const = Slider(ax_const, 'const.', fit_res.x[-1]*0.7, fit_res.x[-1]*1.3, valinit = fit_res.x[-1], valfmt='%1.1f')
 
-
-        self.fig_text = fig.text(0.29, 0.8, 'Peak area:\n{} cm-2'.format(np.round(QUtility.peak_area(self.s_I.val,
-                                        self.s_HWHM_l.val, self.s_HWHM_r.val,
-                                        self.s_sigma.val)), 2))
+        self.fig_text = self.create_fig_text(fig, 0.29, 0.8, 
+            "Peak area:\n{} cm-2".format(np.round(QUtility.peak_area(self.s_I.val,
+            self.s_HWHM_l.val, self.s_HWHM_r.val,
+            self.s_sigma.val), 2)))
 
         self.s_x0.on_changed(self.widget_update)
         self.s_I.on_changed(self.widget_update)
         self.s_HWHM_l.on_changed(self.widget_update)
         self.s_HWHM_r.on_changed(self.widget_update)
         self.s_sigma.on_changed(self.widget_update)
-        self.s_const.on_changed(self.widget_update)
-        self.resetax = fig.add_axes([0.8, 0.025, 0.1, 0.04])
+
+        self.resetax = fig.add_axes([0.8, sypos, 0.1, 0.04])
 
         self.reset_button = mplButton(self.resetax, 'Reset', color=axcolor, hovercolor='0.975')
 
@@ -112,17 +129,12 @@ class QCanvasHelperManualPeakFit(QCanvasHelperBase):
         HWHM_l = self.s_HWHM_l.val
         HWHM_r = self.s_HWHM_r.val
         sigma = self.s_sigma.val
-        const = self.s_const.val
+        const = self.get_disp_value(self.s_const, self.s_const10)
+        self.s_const_text.set(text="{:.2e}".format(const))
+
         self.l.set_ydata(QUtility.pseudovoigt_fit(self.wav_new, pos, I, HWHM_l, HWHM_r, sigma )+const)
         self.l2.set_ydata(QUtility.pseudovoigt_fit(self.wav_new, pos, I, HWHM_l, HWHM_r, sigma )+const-self.fit_area_inter)
-        self.fig_text.set(text='Peak area:\n{} cm-2'.format(np.round(QUtility.peak_area(I,
-                                        HWHM_l, HWHM_r, sigma)), 2))
-
-
-    def clear_plot(self):
-        try:
-            self.fig_text.remove()
-        except AttributeError:
-            pass
-        finally:
-            super().clear_plot()
+        self.fig_text.set(text="Peak area:\n{} cm-2".format(np.round(QUtility.peak_area(I,
+                                        HWHM_l, HWHM_r, sigma), 2)))
+        
+        
