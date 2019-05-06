@@ -62,7 +62,7 @@ class QCanvasHelperBase:
     def create_fig_text(self, fig, xpos, ypos, contents=""):
         """create a new figure text at a given position
         """
-        txt = fig.text(0.29, 0.8, contents)
+        txt = fig.text(xpos, ypos, contents)
         self.texts.append(txt)
         return txt
 
@@ -83,14 +83,14 @@ class QCanvasHelperBase:
         if hastenth:
             tenthaxis = fig.add_axes([xpos, ypos+h, width, th], facecolor=axcolor)
 
-        slider = Slider(axis, caption, minvalue, maxvalue, valinit = initialvalue, valfmt='')
+        slider = Slider(axis, caption, minvalue, maxvalue, valinit=initialvalue, valfmt='')
         if hastenth:
-            w10 = (slider.valmax - slider.valmin)/10
-            tenthslider = Slider(tenthaxis,None, 0.0, w10, valinit = w10/2, valfmt='')
+            w10 = abs(slider.valmax - slider.valmin)/10
+            tenthslider = Slider(tenthaxis, None, 0.0, w10, valinit=w10/2, valfmt='')
         else:
             tenthslider = None
 
-        text = fig.text(xpos + width + 0.01, 0.3, valfmt.format(slider.val))
+        text = fig.text(xpos + width + 0.01, ypos, valfmt.format(slider.val))
         self.texts.append(text)
 
         if onchange!=None:
@@ -102,6 +102,21 @@ class QCanvasHelperBase:
             return slider, text, tenthslider
         else:
             return slider, text
+
+    def create_sym_slider(self, fig, xpos=0.2, ypos=0.3, width=0.65, height=0.03, axcolor = "lightgoldenrodyellow", caption=None,
+                      initialvalue=0.5, widthperc=0.1,
+                      valfmt="{:.2e}",
+                      onchange = None,
+                      hastenth=False):
+        """Create symmetrical slider"""
+
+        valspan = abs(initialvalue * widthperc/2)
+
+        return self.create_slider(fig, xpos=xpos, ypos=ypos, width=width, height=height, axcolor=axcolor, caption=caption,
+                      minvalue=initialvalue-valspan, maxvalue=initialvalue+valspan, initialvalue=initialvalue,
+                      valfmt=valfmt,
+                      onchange=onchange,
+                      hastenth=hastenth)
 
 
     def get_disp_value(self, slider, slider10):

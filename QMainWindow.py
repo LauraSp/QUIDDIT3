@@ -75,7 +75,6 @@ class MainWindow(QTclBaseWindow):
         self.ax.plot(self.IIa_spec[:, 0], self.IIa_spec[:, 1], 'k-')
 
         self.main_canvas = self.make_mplcanvas(fig=self.main_fig, erow=row, ecol=0, cspan=4)
-
         self.message = tk.Text(self, state='disabled', relief=STDRELIEF)
         self.message.grid(row=row, column=4, columnspan=2, sticky=tk.NSEW, padx=5)
         scrl_bar = tk.Scrollbar(self, command=self.message.yview)
@@ -219,11 +218,11 @@ class MainWindow(QTclBaseWindow):
 
     def click_exit(self):
         try:
-            mwin = QTclMessageWindow(mw, "QUIDDIT Question", "Just to make sure ...", "Do you really want to quit QUIDDIT?")
+            QTclMessageWindow(mw, "QUIDDIT Question", "Just to make sure ...", "Do you really want to quit QUIDDIT?")
             if mwin.dresult == 'OK':
                 self.root.destroy()
         except Exception as e:
-            mwin = QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
                 "The original message was: {}".format(str(e)),
                  e)
 
@@ -236,24 +235,35 @@ class MainWindow(QTclBaseWindow):
             self.canhelper.display_previous()
         
     def baseline(self):
-        bl_window = QBaselineSubtrWindow(self, "Baseline subtraction", self.bldata)
-        if bl_window.dresult =='OK':
-            self.bldta = bl_window.bldta
-            i = 1
-            for filename in self.bldta.sel_files:
-                self.print_message(self.message, 'Baseline removal {}/{}:\n{}'.format(i, len(self.bldta.sel_files), filename.split('/')[-1]))
-                bl.remove_baseline(filename, self.bldta.res_dir)
-                i += 1
-            self.print_message(self.message, '\nBaseline removal complete.')
+        try:
+            bl_window = QBaselineSubtrWindow(self, "Baseline subtraction", self.bldata)
+            if bl_window.dresult =='OK':
+                self.bldta = bl_window.bldta
+                i = 1
+                for filename in self.bldta.sel_files:
+                    self.print_message(self.message, 'Baseline removal {}/{}:\n{}'.format(i, len(self.bldta.sel_files), filename.split('/')[-1]))
+                    bl.remove_baseline(filename, self.bldta.res_dir)
+                    i += 1
+                self.print_message(self.message, '\nBaseline removal complete.')
+                self.update()
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "The original message was: {}".format(str(e)),
+                 e)
 
     def plot_spectra(self):
-        spec_window = QAskSpectraWindow(self, "Select Spectra", self.specs)
-        if spec_window.dresult =='OK':
-            self.specs = spec_window.spec_files
-            ch = QCanvasHelperSpectrum(self.main_canvas)
-            ch.add_spectra_files(self.specs)
-            ch.display_first()
-            self.set_can_helper(ch)
+        try:
+            spec_window = QAskSpectraWindow(self, "Select Spectra", self.specs)
+            if spec_window.dresult =='OK':
+                self.specs = spec_window.spec_files
+                ch = QCanvasHelperSpectrum(self.main_canvas)
+                ch.add_spectra_files(self.specs)
+                ch.display_first()
+                self.set_can_helper(ch)
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "The original message was: {}".format(str(e)),
+                 e)
 
 
     def set_can_helper(self, ch):

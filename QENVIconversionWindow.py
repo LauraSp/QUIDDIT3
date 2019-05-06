@@ -25,7 +25,6 @@ class QENVIconversionWindow(QTclPopupWindow):
 
         r = 0
         lfr = self.make_label_frame(self, lrow=r, cspan=2, caption='Select ENVI files for conversion', padx=(5,5), pady=(5,5))
-        #self.makelabel(lrow=r, cspan=3, sticky=tk.W, caption='Select ENVI files for conversion')
 
         w = 44
         ir = 0

@@ -159,11 +159,14 @@ class QTclWindowBasics:
 
         return ca
     
-    def make_mplcanvas(self, parent=None, fig=None, erow=0, ecol=0, rspan=1, cspan=1, sticky=tk.NSEW, **options):
+    def make_mplcanvas(self, parent=None, fig=None, erow=0, ecol=0, rspan=1, cspan=1, width=None, sticky=tk.NSEW, **options):
         p = self if parent == None else parent
         canvas = FigureCanvasTkAgg(fig, master=p, **options)
         mpl_canvas = canvas.get_tk_widget()
         mpl_canvas.grid(row=erow, column=ecol, columnspan=cspan, rowspan=rspan, sticky=sticky)
+
+       # if width:
+       #     mpl_canvas.configure(width=width)
         
         return canvas
 
@@ -207,7 +210,7 @@ class QTclWindowBasics:
                 padx=padx, pady=pady)
         return fr
 
-    def make_label_frame(self, parent=None, caption="Frame", lcol=0, lrow=0, cspan=1, rspan=1,relief=tk.GROOVE, sticky=tk.NSEW, padx=(0,0), pady=(0,0), **options):
+    def make_label_frame(self, parent=None, caption="Frame", lcol=0, lrow=0, cspan=1, rspan=1, relief=tk.GROOVE, sticky=tk.NSEW, padx=(0,0), pady=(0,0), **options):
         p = self if parent == None else parent
         lf = tk.LabelFrame(p, relief=relief, text=caption, **options)
         lf.grid(row=lrow, column=lcol,

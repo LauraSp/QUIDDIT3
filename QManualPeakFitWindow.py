@@ -21,7 +21,7 @@ class QManualPeakFitWindow(QTclPopupWindow):
 
         w = 24
         row = 0
-        filefr = self.make_label_frame(lrow=row, lcol=0, caption='Select files', cspan=2, padx=(5,5), pady=(5,5))
+        filefr = self.make_label_frame(lrow=row, lcol=0, caption='Select files', cspan=3, padx=(5,5), pady=(5,5))
 
         irow = 0
         self.specfileentry = self.makeentry(filefr, lrow=irow, erow=irow, ecol=1, caption='Spectra:', width=w)
@@ -37,17 +37,16 @@ class QManualPeakFitWindow(QTclPopupWindow):
         self.loadbu.configure(state=tk.DISABLED)
 
         row += 1
-        canvfr = self.make_label_frame(lrow=row, lcol=0, caption='Manual Fit', cspan=2, padx=(5,5), pady=(5,5))
+        canvfr = self.make_label_frame(lrow=row, lcol=0, caption='Manual Fit', cspan=3, padx=(5,5), pady=(5,5))
         jrow=0
         self.fig = Figure(dpi=100)
         self.canvas = self.make_mplcanvas(canvfr, fig=self.fig, erow=jrow, ecol=0)
 
         row += 1
-        self.makebutton(erow=row, ecol=1, caption='Next', cmd=self.display_next, padx=(5,5), pady=(5,5), sticky=tk.E)
+        self.makebutton(erow=row, ecol=2, caption='Next', cmd=self.display_next, padx=(5,5), pady=(5,5), sticky=tk.E)
         self.makebutton(erow=row, ecol=0, caption='Previous', cmd=self.display_prev, padx=(5,5), pady=(5,5), sticky=tk.W)
 
-        row += 1
-        self.add_std_buttons(row=row, dismisscol=0)
+        self.add_std_buttons(row=row, dismisscol=1)
 
     def get_files(self):
         self.specfiles = fd.askopenfilenames(parent = self,

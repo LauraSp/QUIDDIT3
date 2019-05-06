@@ -11,7 +11,8 @@ class QENVIconverter:
 
     def convert(self):
         with open(self.hdr, 'r+') as hdr:
-            bo_found = any('byte order' in line for line in hdr)
+            assert(any('byte order' in line for line in hdr)), "Byte order information missing from header file.\nDepending on what operating system the header file was CREATED on,\nyou can manually insert\n'byte order = 0' (Windows, Linux) or 'byte order = 1' (MacOS)\ninto the header file:\n{}".format(self.hdr)
+            #bo_found = any('byte order' in line for line in hdr)
             #if not bo_found:
             #    self.add_byteorder()
                 

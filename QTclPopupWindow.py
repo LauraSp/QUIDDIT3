@@ -84,10 +84,9 @@ class QTclPopupWindow(QTclWindowBasics, tk.Toplevel):
         if dismisscol != None:
             self.bind('<Escape>', self.cancel_event)
             self.makebutton(erow=row, ecol=dismisscol,
-                                 width=5,
+                                 width=7,
                                  caption='Dismiss',
                                  cmd=self.cancel_pressed,
-                                 sticky=tk.W,
                                  padx=padx,
                                  pady=pady)
 

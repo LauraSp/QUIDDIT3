@@ -51,45 +51,60 @@ class QCanvasHelperManualPeakFit(QCanvasHelperBase):
         sydelta = -0.04
         swidth = 0.65
         sheight = 0.03
+
         #create the constant slider(s)
-        self.s_const, self.s_const_text, self.s_const10 = self.create_slider(fig, 
+        self.s_const, self.s_const_text, self.s_const10 = self.create_sym_slider(fig, 
             caption="const.",
             ypos=sypos, width=swidth, height=sheight,
-            minvalue=fit_res.x[-1]*0.4, maxvalue=fit_res.x[-1]*1.6, initialvalue=fit_res.x[-1],
+            widthperc=1.2, initialvalue=fit_res.x[-1],
             hastenth=True,
             onchange=self.widget_update)
-        sypos += sydelta
 
-        ax_x0 = fig.add_axes([sxpos, sypos, swidth, sheight], facecolor=axcolor)
         sypos += sydelta
-        ax_I = fig.add_axes([sxpos, sypos, swidth, sheight], facecolor=axcolor)
+        self.s_x0, self.s_x0_text = self.create_slider(fig, 
+            caption="peak pos.",
+            ypos=sypos, width=swidth, height=sheight,
+            minvalue=pos_guess-5, maxvalue=pos_guess+5, initialvalue=fit_res.x[0],
+            valfmt="{:1.1f}",
+            onchange=self.widget_update)
+
         sypos += sydelta
-        ax_HWHM_l = fig.add_axes([sxpos, sypos, swidth, sheight], facecolor=axcolor)
+        self.s_I, self.s_I_text, self.s_I10 = self.create_slider(fig,
+            caption='peak height',
+            ypos=sypos, width=swidth, height=sheight,
+            minvalue=0, maxvalue=fit_res.x[1]*1.3, initialvalue=fit_res.x[1],
+            hastenth=True,
+            onchange=self.widget_update)
+
         sypos += sydelta
-        ax_HWHM_r = fig.add_axes([sxpos, sypos, swidth, sheight], facecolor=axcolor)
+        self.s_HWHM_l, self.s_HWHM_l_text = self.create_slider(fig,
+            caption='l. half width',
+            ypos=sypos, width=swidth, height=sheight,
+            minvalue=0, maxvalue=fit_res.x[2]*3, initialvalue=fit_res.x[2],
+            onchange=self.widget_update)
+
         sypos += sydelta
-        ax_sigma = fig.add_axes([sxpos, sypos, swidth, sheight], facecolor=axcolor)
-        sypos += 2 * sydelta
-        
-        self.s_x0 = Slider(ax_x0, 'peak pos.', pos_guess-3, pos_guess+3, valinit=fit_res.x[0], valfmt='%1.1f')
-        self.s_I = Slider(ax_I, 'peak height', 0, fit_res.x[1]+fit_res.x[1]*0.25, valinit=fit_res.x[1], valfmt='%1.1f')
-        self.s_HWHM_l = Slider(ax_HWHM_l, 'l. half width', 0, fit_res.x[2]*3, valinit=fit_res.x[2], valfmt='%1.1f')
-        self.s_HWHM_r = Slider(ax_HWHM_r, 'r. half width', 0, fit_res.x[3]*3, valinit=fit_res.x[3], valfmt='%1.1f')
-        self.s_sigma = Slider(ax_sigma, 'Lorentz. contr.', 0, 1, valinit = fit_res.x[4], valfmt='%1.1f')
+        self.s_HWHM_r, self.s_HWHM_r_text = self.create_slider(fig,
+            caption='r. half width',
+            ypos=sypos, width=swidth, height=sheight,
+            minvalue=0, maxvalue=fit_res.x[3]*3, initialvalue=fit_res.x[3],
+            onchange=self.widget_update)
+
+        sypos += sydelta
+        self.s_sigma, self.s_sigma_text = self.create_slider(fig,
+            caption='Lorentz. contr.',
+            ypos=sypos, width=swidth, height=sheight,
+            minvalue=0, maxvalue=1, initialvalue=fit_res.x[4],
+            onchange=self.widget_update, valfmt='{:.2f}')
 
         self.fig_text = self.create_fig_text(fig, 0.29, 0.8, 
             "Peak area:\n{} cm-2".format(np.round(QUtility.peak_area(self.s_I.val,
             self.s_HWHM_l.val, self.s_HWHM_r.val,
             self.s_sigma.val), 2)))
 
-        self.s_x0.on_changed(self.widget_update)
-        self.s_I.on_changed(self.widget_update)
-        self.s_HWHM_l.on_changed(self.widget_update)
-        self.s_HWHM_r.on_changed(self.widget_update)
-        self.s_sigma.on_changed(self.widget_update)
-
-        self.resetax = fig.add_axes([0.8, sypos, 0.1, 0.04])
-
+        # create reset button
+        sypos += 2 * sydelta
+        self.resetax = fig.add_axes([sxpos+swidth, sypos, 0.1, 0.04])
         self.reset_button = mplButton(self.resetax, 'Reset', color=axcolor, hovercolor='0.975')
 
         sliders = (self.s_x0, self.s_I, self.s_HWHM_l, self.s_HWHM_r, self.s_sigma, self.s_const)
@@ -124,13 +139,20 @@ class QCanvasHelperManualPeakFit(QCanvasHelperBase):
             slider.reset()
 
     def widget_update(self, val):
+        #get current slider values
         pos = self.s_x0.val
-        I = self.s_I.val
+        I = self.get_disp_value(self.s_I, self.s_I10)
         HWHM_l = self.s_HWHM_l.val
         HWHM_r = self.s_HWHM_r.val
         sigma = self.s_sigma.val
         const = self.get_disp_value(self.s_const, self.s_const10)
+
         self.s_const_text.set(text="{:.2e}".format(const))
+        self.s_x0_text.set(text="{:.1f}".format(pos))
+        self.s_I_text.set(text="{:.2e}".format(I))
+        self.s_HWHM_l_text.set(text="{:.2e}".format(HWHM_l))
+        self.s_HWHM_r_text.set(text="{:.2e}".format(HWHM_r))
+        self.s_sigma_text.set(text="{:.2f}".format(HWHM_r))
 
         self.l.set_ydata(QUtility.pseudovoigt_fit(self.wav_new, pos, I, HWHM_l, HWHM_r, sigma )+const)
         self.l2.set_ydata(QUtility.pseudovoigt_fit(self.wav_new, pos, I, HWHM_l, HWHM_r, sigma )+const-self.fit_area_inter)
