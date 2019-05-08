@@ -13,9 +13,9 @@ class QCanvasHelperMap(QCanvasHelperBase):
         self.x = []
         self.y = []
         for name in dta['name']:
-            xy = name.split('/')[-1]
+            xy = name.lower().split('/')[-1]
             self.x.append(float(xy.split(' ')[0][2:]))
-            self.y.append(float(xy.split(' ')[1].strip(".csv'")[1:]))
+            self.y.append(float(xy.split(' ')[1].strip(".csv")[1:]))
 
         self.mapextent = (min(self.x), max(self.x), min(self.y), max(self.y))
         resolution = QSettings.STD_RES
@@ -35,8 +35,7 @@ class QCanvasHelperMap(QCanvasHelperBase):
             'I(3107) $(cm^{-2})$': dta['H_area_ana']}
 
         self.maxidx = len(self.map_data)
-        #for title in QSettings.PLOTITEMS:
-        #    self.map_mapdata.append(MAPS[title])
+
 
     def display_current(self):
         """plot map
@@ -45,9 +44,7 @@ class QCanvasHelperMap(QCanvasHelperBase):
         
         key = self.idx_data[self.current]
         data = self.map_data[key]
-        #clim = QSettings.MAPCLIMS[key]
         clim = self.clims[key]
-        resolution = QSettings.STD_RES
         dtagrid = self.make_2d_grid(data)
 
         fig = self.canv.figure
@@ -60,6 +57,8 @@ class QCanvasHelperMap(QCanvasHelperBase):
         cax = divider.append_axes("right", size="5%", pad=0.3)
         self.cbar = fig.colorbar(img, cax=cax)
         fig.suptitle(key)
+
+        fig.tight_layout(rect=[0, 0.03, 1, 0.95])
 
         self.canv.draw()
         

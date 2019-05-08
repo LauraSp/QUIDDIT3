@@ -43,8 +43,6 @@ class QCanvasHelperManualPeakFit(QCanvasHelperBase):
         self.l, = sp.plot(self.wav_new, fit, 'g-')
         self.l2, = sp.plot(self.wav_new, (fit - self.fit_area_inter),'r-')
         sp.axhline(y=0, ls='--', color='k')
-
-        axcolor = 'lightgoldenrodyellow'
             
         sxpos = 0.2
         sypos = 0.3
@@ -52,7 +50,7 @@ class QCanvasHelperManualPeakFit(QCanvasHelperBase):
         swidth = 0.65
         sheight = 0.03
 
-        #create the constant slider(s)
+        #create slider(s)
         self.s_const, self.s_const_text, self.s_const10 = self.create_sym_slider(fig, 
             caption="const.",
             ypos=sypos, width=swidth, height=sheight,
@@ -105,7 +103,7 @@ class QCanvasHelperManualPeakFit(QCanvasHelperBase):
         # create reset button
         sypos += 2 * sydelta
         self.resetax = fig.add_axes([sxpos+swidth, sypos, 0.1, 0.04])
-        self.reset_button = mplButton(self.resetax, 'Reset', color=axcolor, hovercolor='0.975')
+        self.reset_button = mplButton(self.resetax, 'Reset', color='lightgoldenrodyellow', hovercolor='0.975')
 
         sliders = (self.s_x0, self.s_I, self.s_HWHM_l, self.s_HWHM_r, self.s_sigma, self.s_const)
         self.reset_button.on_clicked( lambda event, arg=sliders: self.widget_reset(event, arg))

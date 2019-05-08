@@ -13,6 +13,9 @@ from QUtility import *
 
 def fit_peak(specfile, peak):
     
+    result = np.zeros(1, dtype=QUtility.peakfit_dtype)
+    result['name'] = specfile
+
     print('Reading spectrum: {}'.format(specfile))
     spectrum = np.loadtxt(specfile, delimiter=',')
     aoi_spec = QUtility.spectrum_slice(spectrum, peak-50, peak+50)
@@ -26,7 +29,11 @@ def fit_peak(specfile, peak):
     aoi_bg = np.polyval(aoi_bg_params, aoi_spec[:,0])
     
     (bg_a, bg_b, bg_c, bg_d) = aoi_bg_params
-    
+    result['bg_a'] = bg_a
+    result['bg_b'] = bg_b
+    result['bg_c'] = bg_c
+    result['bg_d'] = bg_d
+
     absorp_new = aoi_spec[:,1] - aoi_bg
     wav_new = aoi_spec[:,0]
     spec_new = np.column_stack((wav_new, absorp_new))
@@ -42,13 +49,21 @@ def fit_peak(specfile, peak):
     #fit = utility.pseudovoigt_fit(wav_new, *res.x)
     (pos, I, HWHM_l, HWHM_r, sigma) = res.x
     area_ana = QUtility.peak_area(I, HWHM_l, HWHM_r, sigma)
-    
     area_num = integrate.simps(absorp_new)
-    
+
+    result['x0'] = pos
+    result['I'] = I
+    result['HWHM_l'] = HWHM_l
+    result['HWHM_r'] = HWHM_r
+    result['sigma'] = sigma
+
+    result['area_ana'] = area_ana
+    result['area_num'] = area_num
+       
     for item in zip((pos, I, HWHM_l, HWHM_r, sigma), ('pos','I', 'HWHM_l','HWHM_r','sigma')):
-        print(item[1]+': '+str(item[0])+'\n') 
-        
-    return (specfile, pos, I, HWHM_l, HWHM_r, sigma, area_ana, area_num, bg_a, bg_b, bg_c, bg_d)
+        print(item[1]+': '+str(item[0])+'\n')
+
+    return result #(specfile, pos, I, HWHM_l, HWHM_r, sigma, area_ana, area_num, bg_a, bg_b, bg_c, bg_d)
 
 if __name__ == "__main__":
     fit_peak(sys.argv[1], sys.argv[2])

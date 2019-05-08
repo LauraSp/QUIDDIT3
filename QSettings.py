@@ -64,12 +64,12 @@ class QSettings:
         MAPCLIMS = {'$[N_T]$ (ppm)': (None, None),
                 '$[N_A]$ (ppm)': (None, None),
                 '$[N_B]$ (ppm)': (None, None),
-                '$[N_B]/[N_T]$': (0, 1),
+                '$[N_B]/[N_T]$': (0., 1.),
                 r'$T (^{\circ}C)$': (1000, 1400),
-                'platelet peak position $(cm^{-1})$':(1358, 1378),
+                'platelet peak position $(cm^{-1})$':(1358., 1378.),
                 'platelet peak area $(cm^{-2})$': (None, None),
-                'platelet peak width $(cm^{-1})$': (None, 25),
-                'platelet peak symmetry $(cm^{-1})$': (-15, 5),
+                'platelet peak width $(cm^{-1})$': (None, 25.),
+                'platelet peak symmetry $(cm^{-1})$': (-15., 5.),
                 'I(3107) $(cm^{-2})$': (None, None)}
 
         STD_COLS = cm.get_cmap('jet')

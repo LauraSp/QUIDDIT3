@@ -131,6 +131,7 @@ class MainWindow(QTclBaseWindow):
         self.twostage_inp = QTwoStageModelInp(2700, 1600, 0.82, 400, 0.2)
         self.manualfit_files = []
 
+
     def print_message(self, textwidget, text):
         """print text to textwidget
         """
@@ -138,6 +139,17 @@ class MainWindow(QTclBaseWindow):
         textwidget.insert('end', text+'\n')
         textwidget['state'] = 'disabled'
         textwidget.see('end')
+
+    def print_result(self, header, result):
+        names = header.split(',')
+
+        for idx, item in enumerate(zip(names, result)):
+            if idx == 0:
+                self.print_message(self.message, 'results for spectrum {}'.format(str(result['name']).split('/')[-1]))
+            else:
+                self.print_message(self.message, '{}: {}'.format(item[0], np.round(item[1], 2)))
+
+        self.print_message(self.message, '\n')
 
 
     def create_menu_bar(self):
@@ -188,10 +200,17 @@ class MainWindow(QTclBaseWindow):
 
         return menubar
 
+
     def histo_popup(self):
-        if self.canhelper != None:
-            histo = self.canhelper.get_current_histo_data()
-            histopop = QHistogramWindow(mw, "Histogram", histo)
+        try:
+            if self.canhelper != None:
+                histo = self.canhelper.get_current_histo_data()
+                QHistogramWindow(mw, "Histogram", histo)
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
 
     
     def convert_ENVI(self):
@@ -207,33 +226,45 @@ class MainWindow(QTclBaseWindow):
                 self.print_message(self.message, 'Conversion complete.\n')
         except Exception as e:
             QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
-               "The original message was: {}".format(str(e)),
+               "Original message: {}".format(str(e)),
                 e)
 
+
     def change_user_settings(self):
-        QUserSettingsWindow(mw, "User settings")
+        try:
+            QUserSettingsWindow(mw, "User settings")
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
+
 
     def do_nothing(self):
         pass
 
+
     def click_exit(self):
         try:
-            QTclMessageWindow(mw, "QUIDDIT Question", "Just to make sure ...", "Do you really want to quit QUIDDIT?")
+            mwin = QTclMessageWindow(mw, "QUIDDIT Question", "Just to make sure ...", "Do you really want to quit QUIDDIT?")
             if mwin.dresult == 'OK':
                 self.root.destroy()
         except Exception as e:
             QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
-                "The original message was: {}".format(str(e)),
+                "Original message: {}".format(str(e)),
                  e)
+
 
     def display_next(self):
         if self.canhelper != None:
             self.canhelper.display_next()
 
+
     def display_prev(self):
         if self.canhelper != None:
             self.canhelper.display_previous()
-        
+
+
     def baseline(self):
         try:
             bl_window = QBaselineSubtrWindow(self, "Baseline subtraction", self.bldata)
@@ -248,8 +279,9 @@ class MainWindow(QTclBaseWindow):
                 self.update()
         except Exception as e:
             QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
-                "The original message was: {}".format(str(e)),
+                "Original message: {}".format(str(e)),
                  e)
+
 
     def plot_spectra(self):
         try:
@@ -262,7 +294,7 @@ class MainWindow(QTclBaseWindow):
                 self.set_can_helper(ch)
         except Exception as e:
             QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
-                "The original message was: {}".format(str(e)),
+                "Original message: {}".format(str(e)),
                  e)
 
 
@@ -282,112 +314,177 @@ class MainWindow(QTclBaseWindow):
 
 
     def plot_ls(self):
-        resfile_window = QAskFileWindow(self, "File Selection", 'Select linescan results', self.lineresultfile)
-        if resfile_window.dresult=='OK':
-            self.lineresultfile = resfile_window.sel_file
-            ch = QCanvasHelperLineResult(self.main_canvas)
-            ch.add_line_data(self.lineresultfile)
-            ch.display_first()
+        try:
+            resfile_window = QAskFileWindow(self, "File Selection", 'Select linescan results', self.lineresultfile)
+            if resfile_window.dresult=='OK':
+                self.lineresultfile = resfile_window.sel_file
+                ch = QCanvasHelperLineResult(self.main_canvas)
+                ch.add_line_data(self.lineresultfile)
+                ch.display_first()
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
             
     def plot_map(self):
-        resfile_window = QPlotMapInpWindow(self, "Input for map plotting", self.mapinp)
-        if resfile_window.dresult=='OK':
-            self.mapinp.map_file = resfile_window.sel_file
-            self.historesultfile = resfile_window.sel_file
-            clims = resfile_window.clims
-            ch = QCanvasHelperMap(self.main_canvas)
-            ch.add_map_file(self.mapinp.map_file, clims)
-            self.print_message(self.message, 'Plotting map. This may take a few seconds...')
-            ch.display_first()
-            self.set_can_helper(ch)
+        try:
+            resfile_window = QPlotMapInpWindow(self, "Input for map plotting", self.mapinp)
+            if resfile_window.dresult=='OK':
+                self.mapinp.map_file = resfile_window.sel_file
+                self.mapinp.clims = resfile_window.clims
+                self.historesultfile = resfile_window.sel_file
+                ch = QCanvasHelperMap(self.main_canvas)
+                ch.add_map_file(self.mapinp.map_file, self.mapinp.clims)
+                self.print_message(self.message, 'Plotting map. This may take a few seconds...')
+                ch.display_first()
+                self.set_can_helper(ch)
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
 
     def plot_histogram(self):
-        resfile_window = QAskFileWindow(self, "File Selection", 'Select result file', self.historesultfile)
-        if resfile_window.dresult=='OK':
-            self.historesultfile = resfile_window.sel_file
-            self.mapinp.mapfile = resfile_window.sel_file
-            resultfile = resfile_window.sel_file
-            ch = QCanvasHelperMultiHisto(self.main_canvas)
-            ch.add_result_file(resultfile)
-            ch.display_first()
-            self.set_can_helper(ch)
+        try:
+            resfile_window = QAskFileWindow(self, "File Selection", 'Select result file', self.historesultfile)
+            if resfile_window.dresult=='OK':
+                self.historesultfile = resfile_window.sel_file
+                self.mapinp.mapfile = resfile_window.sel_file
+                resultfile = resfile_window.sel_file
+                ch = QCanvasHelperMultiHisto(self.main_canvas)
+                ch.add_result_file(resultfile)
+                ch.display_first()
+                self.set_can_helper(ch)
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
         
     def plot_quadplot(self):
-        resfile_window = QAskFileWindow(self, "File Selection", 'Select result file', self.quadplotresultfile)
-        if resfile_window.dresult == 'OK':
-            self.quadplotresultfile = resfile_window.sel_file
-            ch = QCanvasHelperQuadplot(self.main_canvas)
-            ch.add_map_data(self.quadplotresultfile)
-            ch.display_first()
+        try:
+            resfile_window = QAskFileWindow(self, "File Selection", 'Select result file', self.quadplotresultfile)
+            if resfile_window.dresult == 'OK':
+                self.quadplotresultfile = resfile_window.sel_file
+                ch = QCanvasHelperQuadplot(self.main_canvas)
+                ch.add_map_data(self.quadplotresultfile)
+                ch.display_first()
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
 
     def plot_ENVI(self):
-        envifiles_window = QAskENVIWindow(self, "File Selection", self.plotenvidata)
-        if envifiles_window.dresult == 'OK':
-            self.plotenvidata = envifiles_window.envidta
-            ch = QCanvasHelperPlotENVI(self.main_canvas)
-            ch.add_files(self.plotenvidata.hdr, self.plotenvidata.dat)
-            ch.display_first()
-            self.set_can_helper(ch)
+        try:
+            envifiles_window = QAskENVIWindow(self, "File Selection", self.plotenvidata)
+            if envifiles_window.dresult == 'OK':
+                self.plotenvidata = envifiles_window.envidta
+                ch = QCanvasHelperPlotENVI(self.main_canvas)
+                ch.add_files(self.plotenvidata.hdr, self.plotenvidata.dat)
+                ch.display_first()
+                self.set_can_helper(ch)
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
+
 
     def about(self):
         QAboutWindow(self, "About QUIDDIT")
 
+
     def review_deconv(self):
-        revinp = QReviewInpWindow(self, "Review Input", self.revdta)
-        if revinp.dresult =='OK':
-            self.revdta = revinp.revdta
-            ch = QCanvasHelperDeconvReview(self.main_canvas)
-            ch.add_files(revinp.revdta)
-            ch.display_first()
-            self.set_can_helper(ch)
+        try:
+            revinp = QReviewInpWindow(self, "Review Input", self.revdta)
+            if revinp.dresult =='OK':
+                self.revdta = revinp.revdta
+                ch = QCanvasHelperDeconvReview(self.main_canvas)
+                ch.add_files(revinp.revdta)
+                ch.display_first()
+                self.set_can_helper(ch)
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
+
 
     def review_peakf(self):
-        peakrevinp = QReviewInpWindow(self, "Review Input", self.peakrevdta)
-        if peakrevinp.dresult =='OK':
-            self.peakrevdta = peakrevinp.revdta
-            ch = QCanvasHelperBatchPeakFitReview(self.main_canvas)
-            ch.add_files(peakrevinp.revdta)
-            ch.display_first()
-            self.set_can_helper(ch)
+        try:
+            peakrevinp = QReviewInpWindow(self, "Review Input", self.peakrevdta)
+            if peakrevinp.dresult =='OK':
+                self.peakrevdta = peakrevinp.revdta
+                ch = QCanvasHelperBatchPeakFitReview(self.main_canvas)
+                ch.add_files(peakrevinp.revdta)
+                ch.display_first()
+                self.set_can_helper(ch)
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
+
 
     def process_data(self):
         #get a new input window initialised with process inp data
-        inpf = QProcessDtaInpWindow(self, "Deconvolution Input", self.prcdta)
-        if inpf.dresult =='OK':
-            self.prcdta = inpf.prcdta
+        try:
+            inpf = QProcessDtaInpWindow(self, "Deconvolution Input", self.prcdta)
+            
+            if inpf.dresult =='OK':
+                self.prcdta = inpf.prcdta
 
-            specfiles = self.prcdta.selectedfiles
-            resultfile = self.prcdta.result + '.csv'
-            reviewfile = self.prcdta.review + '.csv'
-            age = self.prcdta.age
-            samplename = self.prcdta.name
-
-            #prepare files for results and review
-            with open(resultfile, 'w') as res_fob:
-                res_fob.write('Results for sample %s - age: %.0f Ma' %(str(samplename), round(age, 3)) + ':\n')
-                res_fob.write(QUtility.res_header+'\n')
-
-            with open(reviewfile, 'w') as rev_fob:
-                rev_fob.write('Review for sample %s' %(str(samplename)) + ':\n')
-                rev_fob.write(QUtility.rev_header+'\n')
-
-            i = 1
-            for filename in specfiles:
-                self.print_message(self.message, 'Processing file {}/{}'.format(i, len(specfiles)))
-                result, review = decon.deconvolution(filename, self.prcdta.age, QSettings.N_comp)
+                specfiles = self.prcdta.selectedfiles
+                assert(len(specfiles)>=1), "No files selected."
                 
-                with open(resultfile, 'a') as res_fob:
-                    for item in result[0]:
-                        res_fob.write(str(item)+',')
-                    res_fob.write('\n')
+                resultfile = self.prcdta.result
+                reviewfile = self.prcdta.review
 
-                with open(reviewfile, 'a') as rev_fob:
-                    for item in review[0]:
-                        rev_fob.write(str(item)+',')
-                    rev_fob.write('\n')
-                i += 1
+                if resultfile == reviewfile:
+                    reviewfile += '2'
+                    self.print_message(self.message, 'The same name was entered for result and review file. Saving review as: {}'.format(reviewfile + '.csv'))
 
-            self.print_message(self.message, '\nDeconvolution complete.')
+                resultfile += '.csv'
+                reviewfile += '.csv'
+
+                age = self.prcdta.age
+                samplename = self.prcdta.name
+
+                #prepare files for results and review
+                with open(resultfile, 'w') as res_fob:
+                    res_fob.write('Results for sample %s - age: %.0f Ma' %(str(samplename), round(age, 3)) + ':\n')
+                    res_fob.write(QUtility.res_header+'\n')
+
+                with open(reviewfile, 'w') as rev_fob:
+                    rev_fob.write('Review for sample %s' %(str(samplename)) + ':\n')
+                    rev_fob.write(QUtility.rev_header+'\n')
+
+                i = 1
+                for filename in specfiles:
+                    self.print_message(self.message, 'Processing file {}/{}'.format(i, len(specfiles)))
+                    result, review = decon.deconvolution(filename, self.prcdta.age, QSettings.N_comp)
+
+                    self.print_result(QUtility.res_header, result[0])
+                
+                    with open(resultfile, 'a') as res_fob:
+                        for item in result[0]:
+                            res_fob.write(str(item)+',')
+                        res_fob.write('\n')
+
+                    with open(reviewfile, 'a') as rev_fob:
+                        for item in review[0]:
+                            rev_fob.write(str(item)+',')
+                        rev_fob.write('\n')
+                    i += 1
+                    self.update()
+
+                self.print_message(self.message, 'Deconvolution complete.')
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
 
 
     def peak_fit(self):
@@ -407,13 +504,16 @@ class MainWindow(QTclBaseWindow):
                 self.print_message(self.message, 'Processing File {}/{}'.format(i, len(specfiles)))
                 result = peakfit.fit_peak(specfile, self.pkfitdta.peak)
 
+                self.print_result(QUtility.peakfit_header, result[0])
+
                 with open(resultfile, 'a') as res_fob:
-                    for item in result:
+                    for item in result[0]:
                         res_fob.write(str(item)+',')
                     res_fob.write('\n')
                 i += 1
+                self.update()
             
-            self.print_message(self.message, '\nDeconvolution complete.')
+            self.print_message(self.message, 'Deconvolution complete.')
 
 
     def diamondtype(self):

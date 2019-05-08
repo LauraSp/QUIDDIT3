@@ -44,9 +44,7 @@ class QReviewInpWindow(QTclPopupWindow):
         irow += 1
         self.revfileentry = self.makeentry(lfr, lrow=irow, erow=irow, ecol=1, caption="Review file", width=w)
         self.makebutton(lfr, erow=irow, ecol=2, caption='...', cmd=self.get_revfile, sticky=tk.E, padx=(0,5), pady=(0,5))
-
-        row += 1
-        self.makelabel(lrow=row, lcol=0, caption='*preferably baseline corrected', sticky=tk.NSEW, cspan=2)        
+       
         row += 1
         self.add_std_buttons(okcol=1, cancelcol=0, row=row)
         

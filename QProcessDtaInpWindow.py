@@ -56,7 +56,7 @@ class QProcessDtaInpWindow(QTclPopupWindow):
                                         caption='Name for results file: ',
                                         width=24,
                                         textvariable=self.resultvar)
-        #self.set_entry_text(self.result_name, '[sample name] results')
+
         self.makelabel(myfr, lrow=irow, lcol=2, caption=".csv", sticky=tk.W)
 
         irow += 1
@@ -65,7 +65,7 @@ class QProcessDtaInpWindow(QTclPopupWindow):
                                         caption='Name for review file: ',
                                         width=24,
                                         textvariable=self.reviewvar)
-        #self.set_entry_text(self.review_name, '[sample name] review')
+
         self.makelabel(myfr, lrow=irow, lcol=2, caption=".csv", sticky=tk.W)
 
         irow += 1
@@ -80,7 +80,6 @@ class QProcessDtaInpWindow(QTclPopupWindow):
         self.spectrac = self.makeentry(myfr, lrow=irow, erow=irow, ecol=1, caption="Spectra", width=24)
         self.set_file_num()
         self.makebutton(myfr, erow=irow, ecol=2, caption='...', cmd=self.get_filenames, pady=(0,5))
-        #tk.Label(text='hint: use <tab> to auto-complete file names').grid(row=row, column=0, columnspan=3, padx=5, pady=5, sticky=tk.NSEW)
 
         row += 1
         self.add_std_buttons(okcol=1, cancelcol=0, row=row)

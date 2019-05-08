@@ -29,25 +29,15 @@ class QAskFileWindow(QTclPopupWindow):
         row += 1
         self.add_std_buttons(okcol=1, cancelcol=0, row=row)
 
-    def get_file(self):
-        try:
-            selfilevar = fd.askopenfilename(parent = self,
-                        initialdir = QSettings.home,
-                        title="Select file",
-                        iletypes=(('CSV','*.CVS'),('CSV','*.csv'),('all','*.*'),('all','*.*')))
-            self.set_entry_text(self.selfileentry, selfilevar)
 
-        except Exception as e:
-            mwin = QTclMessageWindow(self, "QUODDIT Error", "An unhandled error has occured", 
-                "The original message was: {}".format(str(e)),
-                 e)
+    def get_file(self):
+        selfilevar = fd.askopenfilename(parent = self,
+                    initialdir = QSettings.home,
+                    title="Select file",
+                    filetypes=(('CSV','*.CVS'),('CSV','*.csv'),('all','*.*'),('all','*.*')))
+        self.set_entry_text(self.selfileentry, selfilevar)
+
 
     def ok_pressed(self):
-        try:
-            self.sel_file = self.selfileentry.get()
-            super().ok_pressed()
-
-        except Exception as e:
-            mwin = QTclMessageWindow(self, "QUODDIT Error", "An unhandled error has occured", 
-                "The original message was: {}".format(str(e)),
-                 e)
+        self.sel_file = self.selfileentry.get()
+        super().ok_pressed()

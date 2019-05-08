@@ -66,10 +66,10 @@ class QCanvasHelperBase:
         self.texts.append(txt)
         return txt
 
-    def create_slider(self, fig, xpos=0.2, ypos=0.3, width=0.65, height=0.03, axcolor = "lightgoldenrodyellow", caption=None,
+    def create_slider(self, fig, xpos=0.2, ypos=0.3, width=0.65, height=0.03, axcolor="lightgoldenrodyellow", caption=None,
                       minvalue=0.0, maxvalue=1.0, initialvalue=0.5,
                       valfmt="{:.2e}",
-                      onchange = None,
+                      onchange=None,
                       hastenth=False):
         """create a slider object and an additional 10th slider object and also a text to display the value
            set by the positions ob the two sliders
@@ -83,10 +83,12 @@ class QCanvasHelperBase:
         if hastenth:
             tenthaxis = fig.add_axes([xpos, ypos+h, width, th], facecolor=axcolor)
 
-        slider = Slider(axis, caption, minvalue, maxvalue, valinit=initialvalue, valfmt='')
+        slider = Slider(axis, caption, minvalue, maxvalue, valinit=initialvalue)
+        slider.valtext.set_visible(False)
         if hastenth:
             w10 = abs(slider.valmax - slider.valmin)/10
-            tenthslider = Slider(tenthaxis, None, 0.0, w10, valinit=w10/2, valfmt='')
+            tenthslider = Slider(tenthaxis, None, 0.0, w10, valinit=w10/2)
+            tenthslider.valtext.set_visible(False)
         else:
             tenthslider = None
 

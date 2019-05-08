@@ -44,6 +44,7 @@ class QBaselineSubtrWindow(QTclPopupWindow):
         irow += 1
         self.resdirentry = self.makeentry(lfr, lrow=irow, erow=irow, ecol=1, caption="Directory for corrected spectra", width=w)
         self.makebutton(lfr, erow=irow, ecol=2, caption='...', cmd=self.get_dir, sticky=tk.E, padx=(0,5), pady=(0,5))
+        self.set_entry_text(self.resdirentry, self.res_dir)
         
         row += 1
         self.add_std_buttons(okcol=1, cancelcol=0, row=row)

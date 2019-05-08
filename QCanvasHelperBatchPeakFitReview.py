@@ -16,16 +16,20 @@ class QCanvasHelperBatchPeakFitReview(QCanvasHelperBase):
         peak = QUtility.spectrum_slice(spec, rev['x0']-50, rev['x0']+50)
         wav = np.arange(peak[0,0], peak[-1,0], 0.1)
 
+        peak_interp = QUtility.inter(peak, wav)
+
         psv = QUtility.pseudovoigt_fit(wav, rev['x0'], rev['I'], rev['HWHM_l'], rev['HWHM_r'], rev['sigma'])
         bg = np.polyval((rev['bg_a'], rev['bg_b'], rev['bg_c'], rev['bg_d']), wav)   
         fit = psv + bg
 
         sp = fig.add_subplot(111)
         sp.plot(peak[:,0], peak[:,1], 'k.', label='data')
-        sp.plot(wav, bg, label='bg')
-        sp.plot(wav, fit, label='fit')
+        sp.plot(wav, bg, '--', label='background')
+        sp.plot(wav, fit, 'g-', label='fit')
+        sp.plot(wav, peak_interp-fit, 'r-', label='misfit')
         sp.invert_xaxis()
         sp.legend(loc='best')
+        
 
         self.canv.draw()
     
