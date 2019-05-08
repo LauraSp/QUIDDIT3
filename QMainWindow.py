@@ -29,6 +29,7 @@ from QProcessDtaInpWindow import *
 from QPeakfitInpWindow import *
 from QReviewInpWindow import*
 from QPlotMapInpWindow import *
+from QPlotBatchPeakMapInpWindow import *
 from QBaselineSubtrWindow import *
 from QUserSettingsWindow import *
 from QTwostageModelWindow import *
@@ -41,6 +42,7 @@ from QCanvasHelperLineResult import *
 from QCanvasHelperSingleHisto import *
 from QCanvasHelperMultiHisto import *
 from QCanvasHelperMap import *
+from QCanvasHelperBatchPeakMap import *
 from QCanvasHelperQuadplot import *
 from QCanvasHelperDeconvReview import *
 from QCanvasHelperBatchPeakFitReview import *
@@ -123,6 +125,7 @@ class MainWindow(QTclBaseWindow):
         self.revdta = QReviewInp([], '')
         self.peakrevdta = QReviewInp([], '')
         self.mapinp = QPlotMapInp('', QSettings.MAPCLIMS)
+        self.batchpeakmapinp = QPlotMapInp('', QSettings.BATCHPEAKMAPCLIMS)
         self.diatypedta = QDiamondTypeInp('', [], '', 0)
         self.specs = []
         self.lineresultfile = ''
@@ -182,6 +185,7 @@ class MainWindow(QTclBaseWindow):
         plotmenuopt = {'Plot spectra':self.plot_spectra,
                        'Plot line results':self.plot_ls,
                        'Plot map results':self.plot_map,
+                       'Plot maps from batch peak fit':self.plot_batchpeakmap,
                        'Plot histograms': self.plot_histogram,
                        'Quadplot':self.plot_quadplot}
         self.make_menu(menubar, 'Plot', plotmenuopt)
@@ -219,11 +223,12 @@ class MainWindow(QTclBaseWindow):
             if enviwindow.dresult == 'OK':
                 self.convenvidta = enviwindow.convdta
                 self.print_message(self.message,
-                            'converting ENVI to CSV. Files will be stored here: {}\nn'.format(self.convenvidta.targetdir))
+                            'Converting ENVI to CSV. This may take a while.\nFiles will be stored here: {}\nn'.format(self.convenvidta.targetdir))
             
                 conv = envicon.QENVIconverter(self.convenvidta)
                 conv.convert()
                 self.print_message(self.message, 'Conversion complete.\n')
+
         except Exception as e:
             QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
                "Original message: {}".format(str(e)),
@@ -347,6 +352,22 @@ class MainWindow(QTclBaseWindow):
                 "Original message: {}".format(str(e)),
                  e)
 
+    def plot_batchpeakmap(self):
+        try:
+            resfile_window = QPlotBatchPeakMapInpWindow(self, "Input for map plotting", self.batchpeakmapinp)
+            self.batchpeakmapinp.map_file = resfile_window.sel_file
+            self.batchpeakmapinp.clims = resfile_window.clims
+            ch = QCanvasHelperBatchPeakMap(self.main_canvas)
+            ch.add_map_file(self.batchpeakmapinp.map_file, self.batchpeakmapinp.clims)
+            self.print_message(self.message, 'Plotting map. This may take a few seconds...')
+            ch.display_first()
+            self.set_can_helper(ch)
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                e)
+
     def plot_histogram(self):
         try:
             resfile_window = QAskFileWindow(self, "File Selection", 'Select result file', self.historesultfile)
@@ -446,7 +467,7 @@ class MainWindow(QTclBaseWindow):
 
                 if resultfile == reviewfile:
                     reviewfile += '2'
-                    self.print_message(self.message, 'The same name was entered for result and review file. Saving review as: {}'.format(reviewfile + '.csv'))
+                    self.print_message(self.message, 'The same name was entered for result and review file.\nSaving review as: {}'.format(reviewfile + '.csv'))
 
                 resultfile += '.csv'
                 reviewfile += '.csv'
@@ -479,6 +500,7 @@ class MainWindow(QTclBaseWindow):
                         for item in review[0]:
                             rev_fob.write(str(item)+',')
                         rev_fob.write('\n')
+
                     i += 1
                     self.update()
 
@@ -514,6 +536,7 @@ class MainWindow(QTclBaseWindow):
                         for item in result[0]:
                             res_fob.write(str(item)+',')
                         res_fob.write('\n')
+
                     i += 1
                     self.update()
             
@@ -546,7 +569,9 @@ class MainWindow(QTclBaseWindow):
                     self.print_message(self.message, 'type: {}\nnote: {}\n'.format(diamondtype, note))
                     with open(resultfile, 'a') as res_fob:
                         res_fob.write('{}, {}, {}\n'.format(filename, diamondtype, warn))
+
                     i += 1
+                    self.update()
 
         except Exception as e:
             QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 

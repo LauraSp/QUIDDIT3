@@ -5,12 +5,12 @@ import numpy as np
 from scipy import interpolate
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-
-class QCanvasHelperMap(QCanvasHelperBase):
+class QCanvasHelperBatchPeakMap(QCanvasHelperBase):
 
     def add_map_file(self, file, clims):
         self.clims = clims
-        dta = np.loadtxt(file, dtype=QUtility.results_dtype, delimiter=',', skiprows=2)
+        dta = np.loadtxt(file, dtype=QUtility.peakfit_dtype, delimiter=',', skiprows=2)
+
         self.x = []
         self.y = []
         for name in dta['name']:
@@ -23,20 +23,15 @@ class QCanvasHelperMap(QCanvasHelperBase):
         self.grid_x, self.grid_y = np.mgrid[self.mapextent[0]:self.mapextent[1]:resolution,
                                 self.mapextent[2]:self.mapextent[3]:resolution]
 
-        self.idx_data = QSettings.PLOTITEMS
-        self.map_data = {'$[N_T]$ (ppm)': dta['[NT]'],
-            '$[N_A]$ (ppm)': dta['[NA]'],
-            '$[N_B]$ (ppm)': dta['[NB]'],
-            '$[N_B]/[N_T]$': (dta['[NB]']/dta['[NT]']),
-            '$T (^{\circ}C)$': dta['T'],
-            'platelet peak position $(cm^{-1})$': dta['p_x0'],
-            'platelet peak area $(cm^{-2})$': dta['p_area_ana'],
-            'platelet peak width $(cm^{-1})$': (dta['p_HWHM_l'] + dta['p_HWHM_r']),
-            'platelet peak symmetry $(cm^{-1})$': (dta['p_x0'] - dta['avg']),
-            'I(3107) $(cm^{-2})$': dta['H_area_ana']}
+        self.idx_data = QSettings.PEAKPLOTITEMS
+
+        self.map_data = {'$x_0 (cm^{-1})$': dta['x0'],
+            '$I (cm^{-1})$': dta['I'],
+            'FWHM $(cm^{-1})': dta['HWHM_l']+dta['HWHM_r'],
+            'sigma (-)': (dta['sigma']),
+            'peak area $(cm^{-2})$': dta['area_ana']}
 
         self.maxidx = len(self.map_data)
-
 
     def display_current(self):
         """plot map
@@ -74,4 +69,3 @@ class QCanvasHelperMap(QCanvasHelperBase):
                 "title" : key,
                 "data" : self.map_data[key]
             }
-

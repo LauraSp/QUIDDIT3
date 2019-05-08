@@ -61,6 +61,14 @@ class QSettings:
             'platelet peak symmetry $(cm^{-1})$',
             'I(3107) $(cm^{-2})$')
 
+
+        PEAKPLOTITEMS = ('$x_0 (cm^{-1})$',
+                '$I (cm^{-1})$',
+                'FWHM $(cm^{-1})',
+                'sigma (-)',
+                'peak area $(cm^{-2})$')
+
+
         MAPCLIMS = {'$[N_T]$ (ppm)': (None, None),
                 '$[N_A]$ (ppm)': (None, None),
                 '$[N_B]$ (ppm)': (None, None),
@@ -72,7 +80,16 @@ class QSettings:
                 'platelet peak symmetry $(cm^{-1})$': (-15., 5.),
                 'I(3107) $(cm^{-2})$': (None, None)}
 
+
+        BATCHPEAKMAPCLIMS = {'$x_0 (cm^{-1})$': (None, None),
+                '$I (cm^{-1})$': (None, None),
+                'FWHM $(cm^{-1})': (None, None),
+                'sigma (-)': (0, 1),
+                'peak area $(cm^{-2})$': (None, None)}
+
+
         STD_COLS = cm.get_cmap('jet')
+
 
         var_defaults = {'home' : home,
                 'N_comp' : N_comp,
@@ -90,14 +107,6 @@ class QSettings:
                 'minvar' : 0.,
                 'maxvar' : 1.,
                 'peak' : 0}
-
-        results_dtype=np.dtype([('name', '|O8'),
-                        ('p_x0','float64'),('p_I','float64'), ('p_HWHM_l','float64'),('p_HWHM_r','float64'),('p_sigma','float64'), 
-                        ('avg','float64'), ('p_area_num_data','float64'), ('p_area_ana','float64'), 
-                        ('p_As','float64'), ('p_Tf','float64'), ('p_beta','float64'), ('p_phi','float64'), ('p_sumsqu','float64'), 
-                        ('c','float64'),('a','float64'), ('x', 'float64'), ('b','float64'), ('d', 'float64'), ('const','float64'),
-                        ('[NC]','float64'), ('[NA]','float64'), ('[NB]','float64'), ('[NT]','float64'), ('T', 'float64'), ('N_sumsqu','float64'), 
-                        ('I_3107','float64'), ('H_area_ana','float64'),])
 
 
         # settings for plotting
