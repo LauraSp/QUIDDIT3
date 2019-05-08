@@ -60,8 +60,8 @@ sizing. (Note: This can be avoided by making the window bigger)
 ### Improving user/developer experience
 - [x] Split up main file (aka "the god file") into more managable blocks
 - [x] Improve layout of windows
-- [ ] Basic exception handling
-- [ ] Manual peak fitting with baseline correction
+- [x] Basic exception handling
+- [ ] Add baseline correction to manual peak fitting
 
 
 ### New features

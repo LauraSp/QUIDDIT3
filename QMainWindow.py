@@ -277,6 +277,7 @@ class MainWindow(QTclBaseWindow):
                     i += 1
                 self.print_message(self.message, '\nBaseline removal complete.')
                 self.update()
+
         except Exception as e:
             QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
                 "Original message: {}".format(str(e)),
@@ -292,6 +293,7 @@ class MainWindow(QTclBaseWindow):
                 ch.add_spectra_files(self.specs)
                 ch.display_first()
                 self.set_can_helper(ch)
+
         except Exception as e:
             QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
                 "Original message: {}".format(str(e)),
@@ -385,6 +387,7 @@ class MainWindow(QTclBaseWindow):
                 ch.add_files(self.plotenvidata.hdr, self.plotenvidata.dat)
                 ch.display_first()
                 self.set_can_helper(ch)
+
         except Exception as e:
             QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
                 "Original message: {}".format(str(e)),
@@ -488,67 +491,97 @@ class MainWindow(QTclBaseWindow):
 
 
     def peak_fit(self):
-        peakinp = QPeakfitInpWindow(self, "Peak fit input", self.pkfitdta)
-        if peakinp.dresult =='OK':
-            self.pkfitdta = peakinp.pkdta
-            samplename = self.pkfitdta.name
-            resultfile = self.pkfitdta.result + '.csv'
-            specfiles = self.pkfitdta.selectedfiles
+        try:
+            peakinp = QPeakfitInpWindow(self, "Peak fit input", self.pkfitdta)
+            if peakinp.dresult =='OK':
+                self.pkfitdta = peakinp.pkdta
+                samplename = self.pkfitdta.name
+                resultfile = self.pkfitdta.result + '.csv'
+                specfiles = self.pkfitdta.selectedfiles
 
-            with open(resultfile, 'w') as res_fob:
-                res_fob.write('Results for sample ' + str(samplename) + ':\n')
-                res_fob.write(QUtility.peakfit_header + '\n')
+                with open(resultfile, 'w') as res_fob:
+                    res_fob.write('Results for sample ' + str(samplename) + ':\n')
+                    res_fob.write(QUtility.peakfit_header + '\n')
 
-            i = 1
-            for specfile in specfiles:
-                self.print_message(self.message, 'Processing File {}/{}'.format(i, len(specfiles)))
-                result = peakfit.fit_peak(specfile, self.pkfitdta.peak)
+                i = 1
+                for specfile in specfiles:
+                    self.print_message(self.message, 'Processing File {}/{}'.format(i, len(specfiles)))
+                    result = peakfit.fit_peak(specfile, self.pkfitdta.peak)
 
-                self.print_result(QUtility.peakfit_header, result[0])
+                    self.print_result(QUtility.peakfit_header, result[0])
 
-                with open(resultfile, 'a') as res_fob:
-                    for item in result[0]:
-                        res_fob.write(str(item)+',')
-                    res_fob.write('\n')
-                i += 1
-                self.update()
+                    with open(resultfile, 'a') as res_fob:
+                        for item in result[0]:
+                            res_fob.write(str(item)+',')
+                        res_fob.write('\n')
+                    i += 1
+                    self.update()
             
-            self.print_message(self.message, 'Deconvolution complete.')
+                self.print_message(self.message, 'Deconvolution complete.')
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
 
 
     def diamondtype(self):
-        diatype_window = QDiamondTypeWindow(self, "Diamond Type Determination", self.diatypedta)
-        if diatype_window.dresult == 'OK':
-            self.diatypedta = diatype_window.typedta
-            spectra = self.diatypedta.selectedfiles
-            save = False if self.diatypedta.savevar.get() == 0 else True
-            outpath = self.diatypedta.savedir
+        try:
+            diatype_window = QDiamondTypeWindow(self, "Diamond Type Determination", self.diatypedta)
+            if diatype_window.dresult == 'OK':
+                self.diatypedta = diatype_window.typedta
+                spectra = self.diatypedta.selectedfiles
+                save = False if self.diatypedta.savevar.get() == 0 else True
+                outpath = self.diatypedta.savedir
 
-            resultfile = QSettings.home + '\\' + self.diatypedta.result + '.csv'
-            with open(resultfile, 'w') as res_fob:
-                res_fob.write('name, type, note\n') 
+                resultfile = QSettings.home + '\\' + self.diatypedta.result + '.csv'
+                with open(resultfile, 'w') as res_fob:
+                    res_fob.write('name, type, note\n') 
 
-            i=1
-            for filename in spectra:
-                diamondtype, warn = diatp.diamondtype(filename, save, outpath=outpath)
-                note = 'ok' if warn == '' else warn
-                self.print_message(self.message, 'Processing file {}/{}: {}'.format(i, len(spectra), filename))
-                self.print_message(self.message, 'type: {}\nnote: {}\n'.format(diamondtype, note))
-                with open(resultfile, 'a') as res_fob:
-                    res_fob.write('{}, {}, {}\n'.format(filename, diamondtype, warn))
-                i += 1
+                i=1
+                for filename in spectra:
+                    diamondtype, warn = diatp.diamondtype(filename, save, outpath=outpath)
+                    note = 'ok' if warn == '' else warn
+                    self.print_message(self.message, 'Processing file {}/{}: {}'.format(i, len(spectra), filename))
+                    self.print_message(self.message, 'type: {}\nnote: {}\n'.format(diamondtype, note))
+                    with open(resultfile, 'a') as res_fob:
+                        res_fob.write('{}, {}, {}\n'.format(filename, diamondtype, warn))
+                    i += 1
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
 
 
     def man_N_fit(self):
-        QManualNFitWindow(self, 'Manual N fit', self.manualfit_files)
+        try:
+            QManualNFitWindow(self, 'Manual N fit', self.manualfit_files)
+        
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
 
         
     def man_peakfit(self):
-        QManualPeakFitWindow(self, 'Manual Peak fit', self.manualfit_files)
+        try:
+            QManualPeakFitWindow(self, 'Manual Peak fit', self.manualfit_files)
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
 
 
     def twostage_model(self):
-        QTwostageModelWindow(self, 'Two-stage nitrogen aggregation model', self.twostage_inp)
+        try:
+            QTwostageModelWindow(self, 'Two-stage nitrogen aggregation model', self.twostage_inp)
+        
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+                "Original message: {}".format(str(e)),
+                 e)
 
 
 if __name__ == '__main__':
