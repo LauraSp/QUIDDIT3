@@ -49,12 +49,10 @@ If you are using Anaconda, start **Spyder** (either directly from the start menu
 ## Known Bugs and Issues
 This section provides an overview over known issues with QUIDDIT in order of priority. The author is working on resolving them but no guarantee can be given at what point they will be fixed.
 
-* Review only works if selected spectra match the content of the review file completely
 * moving the cursor to the diagram frame sometimes leads to flickering of the window because displaying x-y-data and toolbar info at the bottom changes 
 sizing. (Note: This can be avoided by making the window bigger)
 * quadplot looks ugly
-* Manual fitting: Sliders inactive if parameter not used in initial fit (e.g. the user can't use the "constant" slider if a constant wasn't added in the initial fit)
-* sliders in manual fit (both custom peak and N region) don't always take on sensible values (e.g. the slider can't be moved far enough)
+
 
 ## Tasks (version 3)
 ### Improving user/developer experience
@@ -75,10 +73,12 @@ sizing. (Note: This can be avoided by making the window bigger)
 - [x] Manual Peak fitting
 - [ ] Custom baseline correction (e.g. allow 1st or 2nd order polynomial instead of just 3rd order polynomial)
 
+
 ## Contact:
 For further questions or suggestions, please contact
 
 Laura Speich: laura.speich@bristol.ac.uk (ls1394@my.bristol.ac.uk)
+
 
 ## See also:
 [Manual.pdf](https://github.com/LauraSp/QUIDDIT3/blob/master/Manual.pdf)
