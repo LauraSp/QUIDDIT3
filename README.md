@@ -1,7 +1,7 @@
 # QUIDDIT 3
 QUantification of Infrared active Defects in Diamond and Inferred Temperatures
 
-Themost recent version (v. 3) is easier to use, more manageable and expandable and comes with improved exception handling. See below for list of pending and completed tasks.
+The most recent version (v. 3) is easier to use, more manageable and expandable and comes with improved exception handling. See below for list of pending and completed tasks.
 
 **license:** You are free to download and use QUIDDIT and all its components.
 
