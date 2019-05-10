@@ -1,15 +1,14 @@
 # QUIDDIT 3
 QUantification of Infrared active Defects in Diamond and Inferred Temperatures
 
-Themost recent version (v. 3) is easier to use, more manageable and expandable and comes with improved exception handling. See below for list of pending and completed tasks.
+The most recent version (v. 3) is easier to use, more manageable and expandable and comes with improved exception handling. See below for list of pending and completed tasks.
 
 **license:** You are free to download and use QUIDDIT and all its components.
 
 ## Download
 **Help us** by letting us know if you have downloaded QUIDDIT! Even if you don't end up using it, please let us know (you can email laura.speich@bristol.ac.uk). Thank you!
 
-All necessary files can be downloaded by visiting the following website:
-https://github.com/LauraSp/QUIDDIT
+All necessary files can be downloaded by visiting the [this website](https://github.com/LauraSp/QUIDDIT3).
 
 This includes commented Jupyter Notebooks documenting the baseline correction and main data processing (see https://jupyter.org/ for instructions on how to use Jupyter Notebook). A full manual of QUIDDIT in PDF format is available in the QUIDDIT GitHub repository as well.
 
@@ -32,7 +31,7 @@ To install Anaconda, visit the [Anaconda download site](https://www.anaconda.com
 Chose your operating system and follow the on-screen instructions.
 
 ### Install QUIDDIT
-Download the **QUIDDIT** package from [GitHub](https://github.com/LauraSp/QUIDDIT) and unpack the zip file. (To download, select "Clone or download" on the repository website)
+Download the **QUIDDIT** package from [GitHub](https://github.com/LauraSp/QUIDDIT3) and unpack the zip file. (To download, select "Clone or download" on the repository website)
 
 To install **Spectral Python (Spy)**, you will have to open a command window (type "cmd" into the search function in your start menu if you are on a Windows system) and navigate to the directory that contains your Python (Anaconda) installation. The Anaconda installer will ask where to install Anaconda. It will most likely be located in "C:\Program Files\Anaconda3\Scripts" or "C:\Users\[Username]\AppData\Local\Continuum\Anaconda3\Scripts" or "C:\ProgramData\Anaconda3\Scripts". You will need to use the `cd [path]` command to do so.
 
