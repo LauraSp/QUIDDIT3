@@ -1,10 +1,11 @@
 from QCanvasHelperBase import *
 import numpy as np
+from QUtility import *
 from QSettings import *
 
 class QCanvasHelperMultiHisto(QCanvasHelperBase):
     def add_result_file(self, file):
-        dta = np.loadtxt(file, dtype=QSettings.results_dtype, delimiter=',', skiprows=2)
+        dta = np.loadtxt(file, dtype=QUtility.results_dtype, delimiter=',', skiprows=2)
 
         self.idx_data = QSettings.PLOTITEMS
         self.hist_data = {'$[N_T]$ (ppm)': dta['[NT]'],

@@ -3,12 +3,23 @@ from QUtility import *
 from QSettings import *
 
 def diamondtype(filename, savecorrected=False, outpath=''):
-    warn = ''
+    warn = []
 
     IIa_spec = np.loadtxt(QSettings.IIa_path, delimiter = ',')
 
     spectrum_prelim = np.loadtxt(filename, delimiter=',')
     spectrum_prelim = QUtility.spectrum_slice(spectrum_prelim, 675, 4000)
+
+    dia_region = QUtility.spectrum_slice(spectrum_prelim, 1900, 2250)
+    dia_region_avg = np.average(dia_region[:,1])
+
+    N_region = QUtility.spectrum_slice(spectrum_prelim, 1000, 1400)
+    N_region_avg = np.average(N_region[:,1])
+
+    saturated = 2.5
+    if (dia_region_avg > saturated or N_region_avg > saturated):
+        warn.append('spectrum may be saturated')
+
     
     print('baseline removal')
     print('preliminary correction...')
@@ -44,7 +55,7 @@ def diamondtype(filename, savecorrected=False, outpath=''):
     print(IIa_res)
 
     if IIa_res.success == False:
-        warn += 'baseline problem:' + str(IIa_res.message) + ', '
+        warn.append('baseline problem:' + str(IIa_res.message))
     
     fit_IIa = QUtility.IIa_fit(IIa_res.x, spectrum[:,0].reshape(len(spectrum[:,0]),1), spectrum[:,1].reshape(len(spectrum[:,1]),1)) 
 
@@ -76,9 +87,9 @@ def diamondtype(filename, savecorrected=False, outpath=''):
         H_1170 = QUtility.height(1170, spec_corr)
 
         if H_1130/H_1282 >= 2:
-            warn += 'C may be present'
+            warn.append('C may be present')
             if H_1344/H_1282 >= 1.8:
-                warn += 'C probably present'
+                warn.append('C probably present')
                 diamondtype += 'b'
         elif H_1344/H_1282 < 1:
             diamondtype += 'a'
@@ -99,5 +110,9 @@ def diamondtype(filename, savecorrected=False, outpath=''):
     
         np.savetxt(output_path, spec_corr, delimiter=',')
 
+    warnstr = ''
+    for message in warn:
+        warnstr += (message + ', ')
 
-    return diamondtype, warn
+
+    return diamondtype, warnstr

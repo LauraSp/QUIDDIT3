@@ -174,18 +174,18 @@ class MainWindow(QTclBaseWindow):
         self.make_menu(menubar, 'Baseline', baselinemenuopt)
 
         procmenuopt = {'General Deconvolution':self.process_data,
-                       'Batch Peak Fit': self.peak_fit,
+                       'Custom Peak Fit': self.peak_fit,
                        'Diamond type': self.diamondtype}
-        self.make_menu(menubar, 'Process', procmenuopt)
+        self.make_menu(menubar, 'Batch Process', procmenuopt)
 
         revmenuopt = {'Review General Deconvolution':self.review_deconv,
-                    'Review Batch Peak Fit':self.review_peakf}
+                    'Review Custom Peak Fit':self.review_peakf}
         self.make_menu(menubar, 'Review', revmenuopt)
 
         plotmenuopt = {'Plot spectra':self.plot_spectra,
                        'Plot line results':self.plot_ls,
                        'Plot map results':self.plot_map,
-                       'Plot maps from batch peak fit':self.plot_batchpeakmap,
+                       'Plot maps from cust. peak fit':self.plot_batchpeakmap,
                        'Plot histograms': self.plot_histogram,
                        'Quadplot':self.plot_quadplot}
         self.make_menu(menubar, 'Plot', plotmenuopt)
@@ -254,6 +254,7 @@ class MainWindow(QTclBaseWindow):
             mwin = QTclMessageWindow(mw, "QUIDDIT Question", "Just to make sure ...", "Do you really want to quit QUIDDIT?")
             if mwin.dresult == 'OK':
                 self.root.destroy()
+
         except Exception as e:
             QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
                 "Original message: {}".format(str(e)),
@@ -475,6 +476,8 @@ class MainWindow(QTclBaseWindow):
                 age = self.prcdta.age
                 samplename = self.prcdta.name
 
+                ch = QCanvasHelperSpectrum(self.main_canvas)
+
                 #prepare files for results and review
                 with open(resultfile, 'w') as res_fob:
                     res_fob.write('Results for sample %s - age: %.0f Ma' %(str(samplename), round(age, 3)) + ':\n')
@@ -486,6 +489,8 @@ class MainWindow(QTclBaseWindow):
 
                 i = 1
                 for filename in specfiles:
+                    ch.add_spectra_files([filename])
+                    ch.display_first()
                     self.print_message(self.message, 'Processing file {}/{}'.format(i, len(specfiles)))
                     result, review = decon.deconvolution(filename, self.prcdta.age, QSettings.N_comp)
 
@@ -525,8 +530,12 @@ class MainWindow(QTclBaseWindow):
                     res_fob.write('Results for sample ' + str(samplename) + ':\n')
                     res_fob.write(QUtility.peakfit_header + '\n')
 
+                ch = QCanvasHelperSpectrum(self.main_canvas)
+
                 i = 1
                 for specfile in specfiles:
+                    ch.add_spectra_files([specfile])
+                    ch.display_first()
                     self.print_message(self.message, 'Processing File {}/{}'.format(i, len(specfiles)))
                     result = peakfit.fit_peak(specfile, self.pkfitdta.peak)
 
@@ -561,8 +570,12 @@ class MainWindow(QTclBaseWindow):
                 with open(resultfile, 'w') as res_fob:
                     res_fob.write('name, type, note\n') 
 
+                ch = QCanvasHelperSpectrum(self.main_canvas)
+
                 i=1
                 for filename in spectra:
+                    ch.add_spectra_files([filename])
+                    ch.display_first()
                     diamondtype, warn = diatp.diamondtype(filename, save, outpath=outpath)
                     note = 'ok' if warn == '' else warn
                     self.print_message(self.message, 'Processing file {}/{}: {}'.format(i, len(spectra), filename))
