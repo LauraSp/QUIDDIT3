@@ -6,7 +6,9 @@ test2 results
 test2 rev
 test2 review
 test3 rev
-.vscode/launch.json
+.vscode/*
+build/*
+dist/*
 old/*
 123QCanvasHelper_old.py
 QPlot.py
@@ -23,3 +25,5 @@ DVK 159 complete peak fit.csv
 Sese results.csv
 Sese review.csv
 Sese K1 58 8 3107 batch peak fit.csv
+build.log
+QMainWindow.spec
