@@ -59,6 +59,7 @@ sizing. (Note: This can be avoided by making the window bigger)
 - [x] Improve layout of windows
 - [x] Basic exception handling
 - [ ] Add baseline correction to manual peak fitting
+- [ ] Provide stand-alone executable for Windows (in progress)
 
 
 ### New features
