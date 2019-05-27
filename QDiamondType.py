@@ -23,7 +23,10 @@ def diamondtype(filename, savecorrected=False, outpath=''):
     
     print('baseline removal')
     print('preliminary correction...')
-    bl= -spectrum_prelim[-1][1]
+
+    min_int = np.argmin(spectrum_prelim[:,1])
+    #bl= -spectrum_prelim[-1][1]
+    bl= -spectrum_prelim[min_int][1]
    
     spectrum_abs = spectrum_prelim[:,1] + bl              
     spectrum = np.column_stack((spectrum_prelim[:,0], spectrum_abs))
@@ -32,35 +35,37 @@ def diamondtype(filename, savecorrected=False, outpath=''):
     row = np.where(spectrum == mindiff)[0][0]
     factor = 12.3/abs((spectrum[row,1]))                # calculate scaling factor    
     spectrum[:,1] *= factor
+
+    spec_corr = spectrum
           
 ###############################################################################
 ################ FITTING AND SUBTRACTING TYPE IIa SPECTRUM #################### 
                                                   
-    print('final fit:')                                                    
-    two_phonon_left = QUtility.spectrum_slice(spectrum, 1500,2312)
-    two_phonon_right = QUtility.spectrum_slice(spectrum, 2391, 3000)
-    two_phonon_extra = QUtility.spectrum_slice(spectrum, 3800, 4000)
-    two_phonon = np.vstack((two_phonon_left, two_phonon_right, two_phonon_extra))
+    #print('final fit:')                                                    
+    #two_phonon_left = QUtility.spectrum_slice(spectrum, 1500,2312)
+    #two_phonon_right = QUtility.spectrum_slice(spectrum, 2391, 3000)
+    #two_phonon_extra = QUtility.spectrum_slice(spectrum, 3800, 4000)
+    #two_phonon = np.vstack((two_phonon_left, two_phonon_right, two_phonon_extra))
 
-    two_phonon_wav = np.arange(two_phonon[:,0][0], two_phonon[:,0][-1], 0.1)
-    two_phonon_ip = QUtility.inter(spectrum, two_phonon_wav, inttype='linear')          # interpolate slice of spectrum used for fitting    
+    #two_phonon_wav = np.arange(two_phonon[:,0][0], two_phonon[:,0][-1], 0.1)
+    #two_phonon_ip = QUtility.inter(spectrum, two_phonon_wav, inttype='linear')          # interpolate slice of spectrum used for fitting    
 
-    IIa_spec_ip = QUtility.inter(IIa_spec, two_phonon_wav, inttype='linear')            # interpolate relevant area of type IIa spectrum
-    IIa_spec_ip_new = QUtility.inter(IIa_spec, spectrum[:,0:-1], inttype='linear')
+    #IIa_spec_ip = QUtility.inter(IIa_spec, two_phonon_wav, inttype='linear')            # interpolate relevant area of type IIa spectrum
+    #IIa_spec_ip_new = QUtility.inter(IIa_spec, spectrum[:,0:-1], inttype='linear')
     
-    IIa_args = (two_phonon_wav, two_phonon_ip, IIa_spec_ip)     # arguments needed for IIa_fit
-    IIa_x0 = [(1, 0, 0)]                                    #initial guess of parameters (normf, poly1, poly2)
-    IIa_bounds = [(0.0, None),(None, None),(None, None)]         #(min, max)-pairs for parameters 
-    IIa_res = op.minimize(QUtility.IIa, args=IIa_args, x0=IIa_x0, method='L-BFGS-B', bounds=IIa_bounds)
-    print(IIa_res)
+    #IIa_args = (two_phonon_wav, two_phonon_ip, IIa_spec_ip)     # arguments needed for IIa_fit
+    #IIa_x0 = [(1, 0, 0)]                                    #initial guess of parameters (normf, poly1, poly2)
+    #IIa_bounds = [(0.0, None),(None, None),(None, None)]         #(min, max)-pairs for parameters 
+    #IIa_res = op.minimize(QUtility.IIa, args=IIa_args, x0=IIa_x0, method='L-BFGS-B', bounds=IIa_bounds)
+    #print(IIa_res)
 
-    if IIa_res.success == False:
-        warn.append('baseline problem:' + str(IIa_res.message))
+    #if IIa_res.success == False:
+    #    warn.append('baseline problem:' + str(IIa_res.message))
     
-    fit_IIa = QUtility.IIa_fit(IIa_res.x, spectrum[:,0].reshape(len(spectrum[:,0]),1), spectrum[:,1].reshape(len(spectrum[:,1]),1)) 
+    #fit_IIa = QUtility.IIa_fit(IIa_res.x, spectrum[:,0].reshape(len(spectrum[:,0]),1), spectrum[:,1].reshape(len(spectrum[:,1]),1)) 
 
-    abs_temp = fit_IIa - IIa_spec_ip_new
-    spec_corr = np.column_stack((spectrum[:,0] , abs_temp))
+    #abs_temp = fit_IIa - IIa_spec_ip_new
+    #spec_corr = np.column_stack((spectrum[:,0] , abs_temp))
 
 ################################################################################
 ########################### DETERMINING DIAMOND TYPE ###########################
@@ -70,14 +75,14 @@ def diamondtype(filename, savecorrected=False, outpath=''):
 
     if N_avg <= 0.19:
         diamondtype = 'II'
-        #H_2800 = QUtility.height(2800, spec_corr)
-        #H_2500 = QUtility.height(2500, spec_corr)
+        H_2802 = QUtility.height(2802, spec_corr)
+        H_2665 = QUtility.height(2665, spec_corr)
 
-        #if abs(H_2500/H_2800) > 0.5:
-        #    diamondtype += 'b'
-        #    warn += 'Handle with care. B detection not fully tested.'
-        #else:
-            #diamondtype += 'a'
+        if abs(H_2802/H_2665) > 1:
+            diamondtype += 'b'
+            warn.append('Handle with care. B detection not fully tested.')
+        else:
+            diamondtype += 'a'
 
     else:
         diamondtype = 'I'
@@ -85,6 +90,7 @@ def diamondtype(filename, savecorrected=False, outpath=''):
         H_1130 = QUtility.height(1130, spec_corr)
         H_1344 = QUtility.height(1344, spec_corr)
         H_1170 = QUtility.height(1170, spec_corr)
+        #H_1392 = QUtility.height(1392, spec_corr)
 
         if H_1130/H_1282 >= 2:
             warn.append('C may be present')

@@ -9,8 +9,6 @@ class QCanvasHelperPlotENVI(QCanvasHelperBase):
     def display_current(self):
         self.clear_plot()
 
-        #with open(self.hdr, 'r+') as hdr:
-        #    bo_found = any('byte order' in line for line in self.hdr)
         curr_band = self.idx_dta[self.current]
         actual_band = QUtility.closest(curr_band, self.bands)
         band_idx = np.where(self.bands == actual_band)[0]   
@@ -23,9 +21,7 @@ class QCanvasHelperPlotENVI(QCanvasHelperBase):
 
 
         sp.imshow(view.squeeze(), origin='lower',
-                #extent=self.mapextent,
                 cmap=QSettings.STD_COLS)
-                #clim=clim)
 
         self.canv.draw()
 

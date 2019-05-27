@@ -89,11 +89,11 @@ class QDiamondTypeWindow(QTclPopupWindow):
 
     def set_save(self):
         if self.savevar.get() == 1:
-            #self.savefr.configure(state=tk.NORMAL)
             self.savecorrected.configure(state=tk.NORMAL)
             self.dir_button.configure(state=tk.NORMAL)
+            self.set_entry_text(self.savecorrected, self.savedir)
+
         else:
-            #self.savefr.configure(state=tk.DISABLED)
             self.savecorrected.configure(state=tk.DISABLED)
             self.dir_button.configure(state=tk.DISABLED)
 

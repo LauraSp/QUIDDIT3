@@ -1,9 +1,10 @@
 @echo off
 pyinstaller ^
---paths "C:\Users\tiger\Anaconda3\envs\quiddit3\Library" ^
+--paths "C:\Users\Laura\Anaconda3\envs\QUIDDIT\Library" ^
 --add-data "CAXBD.csv;." ^
 --add-data "typeIIa.csv;." ^
 --add-data "QUIDDITlogo.gif;." ^
+--name "QUIDDIT" ^
 --windowed ^
 --clean ^
 QMainWindow.py
