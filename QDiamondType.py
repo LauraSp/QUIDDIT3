@@ -4,25 +4,52 @@ from QSettings import *
 
 def diamondtype(filename, savecorrected=False, outpath=''):
     warn = []
+    
+    print('spectrum: {}'.format(filename))
 
-    IIa_spec = np.loadtxt(QSettings.IIa_path, delimiter = ',')
+    #IIa_spec = np.loadtxt(QSettings.IIa_path, delimiter = ',')
 
     spectrum_prelim = np.loadtxt(filename, delimiter=',')
+    
+    if spectrum_prelim[:,1][-1] == 0:
+        spectrum_new = spectrum_prelim[:-1]
+        spectrum_prelim = spectrum_new
+        print('removing rogue value')
+        
+    if spectrum_prelim[:,1][0] == 0:
+        spectrum_new = spectrum_prelim[1:]
+        spectrum_prelim = spectrum_new
+        print('removing rogue value')
+    
+    
     spectrum_prelim = QUtility.spectrum_slice(spectrum_prelim, 675, 4000)
+
+    min_wav = np.min(spectrum_prelim[:,0])
+    max_wav = np.max(spectrum_prelim[:,0])
+    
+    min_range = (1000, 2803)
+
+    if (min_wav > min_range[0] or max_wav < min_range[1]):
+        raise ValueError('Spectrum does not include the minimum required wavenumber range: {} to {}. Only {} to {} was provided'.format(min_range[0], min_range[1], min_wav, max_wav))
+
 
     dia_region = QUtility.spectrum_slice(spectrum_prelim, 1900, 2250)
     dia_region_avg = np.average(dia_region[:,1])
+    
+    print('dia_region_avg: {}'.format(dia_region_avg))
+
 
     N_region = QUtility.spectrum_slice(spectrum_prelim, 1000, 1400)
     N_region_avg = np.average(N_region[:,1])
+    
+    print('N_region_avg: {}'.format(N_region_avg))
 
     saturated = 2.5
     if (dia_region_avg > saturated or N_region_avg > saturated):
         warn.append('spectrum may be saturated')
 
     
-    print('baseline removal')
-    print('preliminary correction...')
+    print('baseline removal...')
 
     min_int = np.argmin(spectrum_prelim[:,1])
     #bl= -spectrum_prelim[-1][1]
@@ -70,13 +97,20 @@ def diamondtype(filename, savecorrected=False, outpath=''):
 ################################################################################
 ########################### DETERMINING DIAMOND TYPE ###########################
 
-    N_spec = QUtility.spectrum_slice(spec_corr, 675, 1000) 
+    N_spec = QUtility.spectrum_slice(spec_corr, 1000, 1400)
     N_avg = np.average(N_spec[:,1])
+    
+    print('N_avg (after corr): {}'.format(N_avg))
 
     if N_avg <= 0.19:
+        
         diamondtype = 'II'
         H_2802 = QUtility.height(2802, spec_corr)
         H_2665 = QUtility.height(2665, spec_corr)
+        
+        print('Testing for Boron')
+        print('H_2802: {}'.format(H_2802))
+        print('H_2665: {}'.format(H_2665))
 
         if abs(H_2802/H_2665) > 1:
             diamondtype += 'b'
@@ -85,11 +119,26 @@ def diamondtype(filename, savecorrected=False, outpath=''):
             diamondtype += 'a'
 
     else:
+        print('N detected.')
         diamondtype = 'I'
         H_1282 = QUtility.height(1282, spec_corr)
         H_1130 = QUtility.height(1130, spec_corr)
         H_1344 = QUtility.height(1344, spec_corr)
         H_1170 = QUtility.height(1170, spec_corr)
+        H_1399 = QUtility.height(1399, spec_corr)
+        
+        #if H_1344-H_1399 >=
+
+
+        if H_1130 > H_1282:
+            print('1130 is higher than 1282.')
+        
+        print('H_1282: {}'.format(H_1282))
+        print('H_1130: {}'.format(H_1130))
+        print('H_1344: {}'.format(H_1344))
+        print('H_1170: {}'.format(H_1170))
+
+        
         #H_1392 = QUtility.height(1392, spec_corr)
 
         if H_1130/H_1282 >= 2:
@@ -120,5 +169,6 @@ def diamondtype(filename, savecorrected=False, outpath=''):
     for message in warn:
         warnstr += (message + ', ')
 
-
-    return diamondtype, warnstr
+    print()
+    
+    return spec_corr, diamondtype, warnstr

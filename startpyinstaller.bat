@@ -1,6 +1,6 @@
 @echo off
 pyinstaller ^
---paths "C:\Users\Laura\Anaconda3\envs\QUIDDIT\Library" ^
+--paths "D:\Users\Laura\Anaconda3\envs\QUIDDITworkenv\Library" ^
 --add-data "CAXBD.csv;." ^
 --add-data "typeIIa.csv;." ^
 --add-data "QUIDDITlogo.gif;." ^

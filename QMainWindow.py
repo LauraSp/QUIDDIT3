@@ -12,13 +12,10 @@ from QImpWindowBasics import *
 import numpy as np
 
 import matplotlib
-#matplotlib.use('TkAgg')
-#Papi: Läuft bei mir auf einen LoadError
-#from matplotlib.backends.backend_tkagg import NavigationToolbar2TkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from matplotlib.figure import Figure
 
-#alle popupwindows have to be imported
+#all popupwindows have to be imported
 from QHistogramWindow import *
 from QAboutWindow import *
 from QAskSpectraWindow import *
@@ -568,7 +565,7 @@ class MainWindow(QTclBaseWindow):
 
                 resultfile = QSettings.home + '\\' + self.diatypedta.result + '.csv'
                 with open(resultfile, 'w') as res_fob:
-                    res_fob.write('name, type, note\n') 
+                    res_fob.write('name, type, note\n')
 
                 ch = QCanvasHelperSpectrum(self.main_canvas)
 
