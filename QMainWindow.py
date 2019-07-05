@@ -22,6 +22,7 @@ from QAskSpectraWindow import *
 from QAskFileWindow import *
 from QAskENVIWindow import *
 from QENVIconversionWindow import *
+from QDPTConversionWindow import *
 from QProcessDtaInpWindow import *
 from QPeakfitInpWindow import *
 from QReviewInpWindow import*
@@ -48,6 +49,7 @@ import QBaseline as bl
 import QGeneralDeconvolution as decon
 import QBatchPeakFit as peakfit
 import QENVIconversion as envicon
+import QDPTConverter as dptcon
 import QDiamondType as diatp
 
 
@@ -117,6 +119,7 @@ class MainWindow(QTclBaseWindow):
         self.prcdta = QProcessDtaInp('','','',2900,[])
         self.pkfitdta = QPeakfitInp('', 3107., '', [])
         self.convenvidta = QENVIconversionInp('','','')
+        self.convdptdta = QDPTconvinp('', '')
         self.plotenvidata = QENVIInp('', '')
         self.bldata = QBaselineSubtrInp([], '')
         self.revdta = QReviewInp([], '')
@@ -156,12 +159,13 @@ class MainWindow(QTclBaseWindow):
         """ Fill the menu
         """
         menubar = tk.Menu(self)
-        filemenuopt = {'Convert ENVI file...':self.convert_ENVI,
+        filemenuopt = {'Convert ENVI file':self.convert_ENVI,
+                        'Convert dpt file':self.convert_DPT,
                         'Open spectra':self.plot_spectra,
                         'Open ENVI': self.plot_ENVI,
                        'Exit':self.click_exit}
         filemenu = self.make_menu(menubar, 'File', filemenuopt)
-        filemenu.insert_separator(1)
+        filemenu.insert_separator(2)
 
         optmenuopt = {'User settings':self.change_user_settings}
                       #'Custom baseline':self.do_nothing}
@@ -220,11 +224,32 @@ class MainWindow(QTclBaseWindow):
             if enviwindow.dresult == 'OK':
                 self.convenvidta = enviwindow.convdta
                 self.print_message(self.message,
-                            'Converting ENVI to CSV. This may take a while.\nFiles will be stored here: {}\nn'.format(self.convenvidta.targetdir))
+                            'Converting ENVI to CSV. This may take a while.\nFiles will be stored here: {}\n'.format(self.convenvidta.targetdir))
             
                 conv = envicon.QENVIconverter(self.convenvidta)
                 conv.convert()
                 self.print_message(self.message, 'Conversion complete.\n')
+
+        except Exception as e:
+            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
+               "Original message: {}".format(str(e)),
+                e)
+
+
+    def convert_DPT(self):
+        try:
+            dptwindow = QDPTConversionWindow(self, "dpt Converison", self.convdptdta)
+
+            if dptwindow.dresult == 'OK':
+                self.convdptdta = QDPTconvinp(dptwindow.dpt_file, dptwindow.target_dir)
+
+                self.print_message(self.message,
+                            'Converting dpt file to CSV. This may take a while.\nFiles will be stored here: {}\n'.format(self.convdptdta.target_dir))
+
+                conv = dptcon.QDPTconverter(self.convdptdta)
+                conv.convert()
+                self.print_message(self.message, 'Conversion complete.\n')
+
 
         except Exception as e:
             QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
@@ -277,6 +302,7 @@ class MainWindow(QTclBaseWindow):
                 for filename in self.bldta.sel_files:
                     self.print_message(self.message, 'Baseline removal {}/{}:\n{}'.format(i, len(self.bldta.sel_files), filename.split('/')[-1]))
                     bl.remove_baseline(filename, self.bldta.res_dir)
+                    self.update()
                     i += 1
                 self.print_message(self.message, '\nBaseline removal complete.')
                 self.update()
@@ -560,10 +586,10 @@ class MainWindow(QTclBaseWindow):
             if diatype_window.dresult == 'OK':
                 self.diatypedta = diatype_window.typedta
                 spectra = self.diatypedta.selectedfiles
-                save = False if self.diatypedta.savevar.get() == 0 else True
+                save = False if self.diatypedta.savevar == 0 else True
                 outpath = self.diatypedta.savedir
 
-                resultfile = QSettings.home + '\\' + self.diatypedta.result + '.csv'
+                resultfile = QSettings.userhome + '\\' + self.diatypedta.result + '.csv'
                 with open(resultfile, 'w') as res_fob:
                     res_fob.write('name, type, note\n')
 

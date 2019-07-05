@@ -58,6 +58,25 @@ def remove_baseline(filename, output_path):
     
     print('--------------------------------------------------------------------')
 
+    plt.figure()
+    plt.subplot(3,1,1)
+    plt.plot(spectrum_prelim[:,0], spectrum_prelim[:,1], 'k.', label='original')
+    plt.plot(spectrum[:,0], spectrum[:,1], label='after prelim corr.')
+    plt.legend(loc='best')
+    
+    plt.subplot(3,1,2)
+    plt.plot(spectrum[:,0], spectrum[:,1], label='after prelim corr.')
+    plt.legend(loc='best')
+
+
+    plt.subplot(3,1,3)
+    plt.plot(spec_temp[:,0], spec_temp[:,1], label='final spec')
+    plt.plot(IIa_spec[:,0], IIa_spec[:,1], 'k-', label='IIa spec')
+    plt.plot(spectrum[:,0], fit_IIa, '.', label='fit')
+    plt.legend(loc='best')
+    plt.show()
+
+
   
 if __name__ == "__main__":
     remove_baseline(sys.argv[1], sys.argv[2])

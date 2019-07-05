@@ -16,14 +16,17 @@ class QDiamondTypeWindow(QTclPopupWindow):
         self.typedta = diamondtypeinput
         self.dresult = "NONE"
         self.savedir = self.typedta.savedir
+        self.savevar = self.getvar(self.typedta.savevar)
+        self.selectedfilesvar = self.typedta.selectedfiles
+        self.resultvar = self.getvar(self.typedta.result)
         super().__init__(parent, title, is_modal)
         
     def make_gui(self, title):
         self.setwintitle(title)
 
-        self.resultvar = self.getvar(self.typedta.result)
-        self.selectedfilesvar = self.typedta.selectedfiles
-        self.savevar = self.getvar(self.typedta.savevar)
+        #self.resultvar = self.getvar(self.typedta.result)
+        #self.selectedfilesvar = self.typedta.selectedfiles
+        #self.savevar = self.getvar(self.typedta.savevar)
 
         w = 24
         row = 0
@@ -74,7 +77,7 @@ class QDiamondTypeWindow(QTclPopupWindow):
 
     def get_filenames(self):
         self.selectedfilesvar = fd.askopenfilenames(parent = self,
-            initialdir = QSettings.home,
+            initialdir = QSettings.userhome,
             title="Select spectra",
             filetypes=(('CSV','*.CSV'),('CSV','*.csv')))
         self.set_file_num()
@@ -82,7 +85,7 @@ class QDiamondTypeWindow(QTclPopupWindow):
 
     def get_directory(self):
         self.savedir = fd.askdirectory(parent=self,
-                    initialdir = QSettings.home,
+                    initialdir = QSettings.userhome,
                     title="Select directory")
         self.set_entry_text(self.savecorrected, self.savedir)
 
@@ -101,7 +104,7 @@ class QDiamondTypeWindow(QTclPopupWindow):
     def ok_pressed(self):
         self.typedta.result = self.resultvar.get()
         self.typedta.selectedfiles = self.selectedfilesvar
-        self.typedta.savevar = self.savevar
+        self.typedta.savevar = self.savevar.get()
         self.typedta.savedir = self.savedir
         super().ok_pressed()
 

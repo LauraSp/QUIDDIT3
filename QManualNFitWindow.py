@@ -52,7 +52,7 @@ class QManualNFitWindow(QTclPopupWindow):
 
     def get_files(self):
         self.specfiles = fd.askopenfilenames(parent = self,
-                    initialdir = QSettings.home,
+                    initialdir = QSettings.userhome,
                     title="Select files",
                     filetypes=(('CSV','*.CVS'),('CSV','*.csv'),('all','*.*'),('all','*.*')))
         self.set_file_num()

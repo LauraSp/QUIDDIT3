@@ -53,14 +53,14 @@ class QBaselineSubtrWindow(QTclPopupWindow):
         
     def get_spectra(self):
         self.sel_files = fd.askopenfilenames(parent = self,
-                                                initialdir = QSettings.home,
+                                                initialdir = QSettings.userhome,
                                                 title="Select spectra",
                                                 filetypes=(('CSV','*.CSV'),('CSV','*.csv')))
         self.set_file_num()
         
     def get_dir(self):
         targetdir = fd.askdirectory(parent=self,
-        initialdir=QSettings.home,
+        initialdir=QSettings.userhome,
         title='Select directory for individual spectra')
         self.set_entry_text(self.resdirentry, targetdir)
     

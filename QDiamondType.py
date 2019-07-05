@@ -102,23 +102,20 @@ def diamondtype(filename, savecorrected=False, outpath=''):
     
     print('N_avg (after corr): {}'.format(N_avg))
 
-    if N_avg <= 0.19:
-        
-        diamondtype = 'II'
-        H_2802 = QUtility.height(2802, spec_corr)
-        H_2665 = QUtility.height(2665, spec_corr)
-        
-        print('Testing for Boron')
-        print('H_2802: {}'.format(H_2802))
-        print('H_2665: {}'.format(H_2665))
+    print('Testing for Boron')
+    H_2802 = QUtility.height(2802, spec_corr)
+    H_2665 = QUtility.height(2665, spec_corr)
+    print('H_2802: {}'.format(H_2802))
+    print('H_2665: {}'.format(H_2665))
 
-        if abs(H_2802/H_2665) > 1:
-            diamondtype += 'b'
-            warn.append('Handle with care. B detection not fully tested.')
-        else:
-            diamondtype += 'a'
+    if abs(H_2802/H_2665) > 1.2:
+        diamondtype = 'IIb'
+        warn.append('Handle with care. B detection not fully tested.')
 
-    else:
+    elif N_avg <= 0.2:
+        diamondtype = 'IIa'
+
+    elif N_avg >= 0.2:
         print('N detected.')
         diamondtype = 'I'
         H_1282 = QUtility.height(1282, spec_corr)
@@ -168,7 +165,5 @@ def diamondtype(filename, savecorrected=False, outpath=''):
     warnstr = ''
     for message in warn:
         warnstr += (message + ', ')
-
-    print()
     
-    return spec_corr, diamondtype, warnstr
+    return diamondtype, warnstr #spec_corr, diamondtype, warnstr

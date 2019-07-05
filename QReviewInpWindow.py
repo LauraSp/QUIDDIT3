@@ -52,14 +52,14 @@ class QReviewInpWindow(QTclPopupWindow):
         
     def get_spectra(self):
         self.spec_files = fd.askopenfilenames(parent = self,
-                                                initialdir = QSettings.home,
+                                                initialdir = QSettings.userhome,
                                                 title="Select spectra",
                                                 filetypes=(('CSV','*.CSV'),('CSV','*.csv')))
         self.set_file_num()
         
     def get_revfile(self):
         revfile = fd.askopenfilename(parent=self,
-                                       initialdir=QSettings.home,
+                                       initialdir=QSettings.userhome,
                                        title='Select review file',
                                        filetypes=(('CSV','*.CSV'),('CSV','*.csv')))
         self.set_entry_text(self.revfileentry, revfile)

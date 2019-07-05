@@ -5,6 +5,7 @@ pyinstaller ^
 --add-data "typeIIa.csv;." ^
 --add-data "QUIDDITlogo.gif;." ^
 --name "QUIDDIT" ^
+--icon "QUIDDITicon.ico" ^
 --windowed ^
 --clean ^
 QMainWindow.py

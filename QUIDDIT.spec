@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['QMainWindow.py'],
-             pathex=['C:\\Users\\Laura\\Anaconda3\\envs\\QUIDDIT\\Library', 'C:\\Users\\Laura\\QUIDDIT 3.0'],
+             pathex=['D:\\Users\\Laura\\Anaconda3\\envs\\QUIDDITworkenv\\Library', 'D:\\QUIDDIT3'],
              binaries=[],
              datas=[('CAXBD.csv', '.'), ('typeIIa.csv', '.'), ('QUIDDITlogo.gif', '.')],
              hiddenimports=[],
@@ -26,7 +26,7 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=False )
+          console=False , icon='QUIDDITicon.ico')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,

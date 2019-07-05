@@ -97,7 +97,7 @@ class QTwostageModelWindow(QTclPopupWindow):
         self.savebutton.config(state=tk.NORMAL)
 
     def save_to_file(self):
-        fname = fd.asksaveasfilename(title='Save results to...', initialdir=QSettings.home, defaultextension='.csv')
+        fname = fd.asksaveasfilename(title='Save results to...', initialdir=QSettings.userhome, defaultextension='.csv')
         if fname != '':
             data = np.column_stack((self.durations, self.temps1, self.temps2))
 

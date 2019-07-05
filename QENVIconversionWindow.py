@@ -52,21 +52,21 @@ class QENVIconversionWindow(QTclPopupWindow):
 
     def get_hdrfile(self):
         hdrfilevar = fd.askopenfilename(parent = self,
-        initialdir = QSettings.home,
+        initialdir = QSettings.userhome,
         title="Select header file",
         filetypes=(('HDR','*.HDR'),('HDR','*.hdr'),('all','*.*'),('all','*.*')))
         self.set_entry_text(self.hdrentry, hdrfilevar)
 
     def get_datfile(self):
         datfilevar = fd.askopenfilename(parent = self,
-        initialdir = QSettings.home,
+        initialdir = QSettings.userhome,
         title="Select data file",
         filetypes=(('DAT','*.DAT'),('DAT','*.dat'),('all','*.*'),('all','*.*')))
         self.set_entry_text(self.datentry, datfilevar)  
 
     def get_targetdir(self):
         targetdir = fd.askdirectory(parent=self,
-                            initialdir=QSettings.home,
+                            initialdir=QSettings.userhome,
                             title='Select directory for individual spectra to be stored')
         self.set_entry_text(self.targetdirentry, targetdir)
 

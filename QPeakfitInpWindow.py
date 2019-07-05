@@ -74,7 +74,7 @@ class QPeakfitInpWindow(QTclPopupWindow):
 
     def get_filenames(self):
         self.selectedfilesvar = fd.askopenfilenames(parent = self,
-            initialdir = QSettings.home,
+            initialdir = QSettings.userhome,
             title="Select spectra",
             filetypes=(('CSV','*.CSV'),('CSV','*.csv')))
         self.set_file_num()

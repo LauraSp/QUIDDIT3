@@ -81,7 +81,7 @@ class QPlotBatchPeakMapInpWindow(QTclPopupWindow):
 
     def get_file(self):
         selfilevar = fd.askopenfilename(parent = self,
-                    initialdir = QSettings.home,
+                    initialdir = QSettings.userhome,
                     title="Select file",
                     filetypes=(('CSV','*.CVS'),('CSV','*.csv'),('all','*.*'),('all','*.*')))
         self.set_entry_text(self.selfileentry, selfilevar)
