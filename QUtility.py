@@ -14,7 +14,7 @@ import scipy.optimize as op
 from scipy import interpolate
 from scipy import integrate
 from scipy import stats
-#import matplotlib as mpl
+from scipy.stats import gaussian_kde
 
 ##############################################################################
 ############################# DEFINE FUNCTIONS ###############################
@@ -35,6 +35,13 @@ class QUtility:
         """returns interpolated spectrum"""
         spec_interp = interpolate.interp1d(spectrum[:,0], spectrum[:,1], kind=inttype, bounds_error=False, fill_value=0)
         return spec_interp(wav_new)
+
+    @staticmethod
+    def make_Kde(x, y):
+        xy = np.vstack([x, y])
+        xy_z = gaussian_kde(xy)(xy)
+        xy_idx = xy_z.argsort()
+        return xy_idx, xy_z
     
     @staticmethod
     def IIa(params, wavenum, absorp, IIa):
