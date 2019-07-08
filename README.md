@@ -3,6 +3,8 @@ QUantification of Infrared active Defects in Diamond and Inferred Temperatures
 
 The most recent version (v. 3) is easier to use, more manageable and expandable and comes with improved exception handling. See below for list of pending and completed tasks.
 
+A **stand-alone executable** version for Windows (x64) is now available on request. Please e-amail laura.speich@bristol.ac.uk for enquiries.
+
 **license:** You are free to download and use QUIDDIT and all its components.
 
 ## Download
