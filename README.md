@@ -57,14 +57,17 @@ sizing. (Note: This can be avoided by making the window bigger)
 
 ## Tasks (version 3)
 ### Improving user/developer experience
+- [ ] Provide stand-alone executable for Windows (in progress)
 - [x] Split up main file (aka "the god file") into more managable blocks
 - [x] Improve layout of windows
 - [x] Basic exception handling
+
+
+### New/improved features
 - [ ] Add baseline correction to manual peak fitting
-- [ ] Provide stand-alone executable for Windows (in progress)
-
-
-### New features
+- [ ] Custom baseline correction (e.g. allow 1st or 2nd order polynomial instead of just 3rd order polynomial)
+- [ ] extend spectral range used for fitting
+- [ ] improve handling of "saturated" spectra
 - [x] Determine diamond type (beta! Use with care.)
 - [x] Converting ENVI files to CSV
 - [x] Batch Peak fitting with output
@@ -73,7 +76,6 @@ sizing. (Note: This can be avoided by making the window bigger)
 - [x] Quadplot
 - [x] Manual N fitting
 - [x] Manual Peak fitting
-- [ ] Custom baseline correction (e.g. allow 1st or 2nd order polynomial instead of just 3rd order polynomial)
 
 
 ## Contact:
