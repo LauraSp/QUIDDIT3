@@ -66,8 +66,10 @@ sizing. (Note: This can be avoided by making the window bigger)
 ### New/improved features
 - [ ] Add baseline correction to manual peak fitting
 - [ ] Custom baseline correction (e.g. allow 1st or 2nd order polynomial instead of just 3rd order polynomial)
-- [ ] extend spectral range used for fitting
-- [ ] improve handling of "saturated" spectra
+- [ ] Extend spectral range used for fitting of nitrogen region
+- [ ] Extend spectral range used for combined overall baseline removal and normalisation
+- [ ] Improve handling of "saturated"/noisy spectra
+- [x] Add plotting of C-centre concentration
 - [x] Determine diamond type (beta! Use with care.)
 - [x] Converting ENVI files to CSV
 - [x] Batch Peak fitting with output
