@@ -1,5 +1,6 @@
 import numpy as np
 from QCanvasHelperBase import *
+from QUtility import *
 
 class QCanvasHelperSpectrum(QCanvasHelperBase):
 
@@ -23,7 +24,9 @@ class QCanvasHelperSpectrum(QCanvasHelperBase):
 
     def get_spec(self, id):
         if id.lower().endswith('.csv'):
-            return np.loadtxt(id, delimiter=',')
+
+            return QUtility.read_spec(id)
+
         else:
             raise Exception("Unknown identifier " + id + " in get_spec")
 

@@ -10,8 +10,13 @@ class QUserSettingsWindow(QTclPopupWindow):
         self.setwintitle(title)
         
         row = 0
-        blset_frame = self.make_label_frame(lrow=row, cspan=2, caption='Baseline settings', padx=(5,5))
-        self.makelabel(blset_frame, caption='some settings...')
+        self.BLvar = tk.IntVar()
+        blset_frame = self.make_label_frame(lrow=row, cspan=2, caption='Baseline method', padx=(5,5))
+        irow = 0
+        self.stdbl = self.makeradio(parent=blset_frame, erow=irow, caption = "I(1992) = 12.3 cm-1", variable=self.BLvar, value=0)
+
+        irow += 1
+        self.jpcbl = self.makeradio(parent=blset_frame, erow=irow, caption = "JPC method", variable=self.BLvar, value=1)
         
         row += 1
         fitset_frame = self.make_label_frame(self, lrow=row, cspan=2, caption='Fit settings', padx=(5,5))
@@ -52,6 +57,7 @@ class QUserSettingsWindow(QTclPopupWindow):
         self.Bvar.set(QSettings.N_comp[3])
         self.Dvar.set(QSettings.N_comp[4])
         self.constvar.set(QSettings.N_comp[5])
+        self.BLvar.set(QSettings.BLvar)
 
 
     def restore_defaults(self):
@@ -61,6 +67,7 @@ class QUserSettingsWindow(QTclPopupWindow):
         self.Bvar.set(QSettings.ori_N_comp[3])
         self.Dvar.set(QSettings.ori_N_comp[4])
         self.constvar.set(QSettings.ori_N_comp[5])
+        self.BLvar.set(QSettings.ori_BLvar)
 
     def ok_pressed(self):
         QSettings.N_comp = np.array(
@@ -70,6 +77,7 @@ class QUserSettingsWindow(QTclPopupWindow):
             self.Bvar.get(),
             self.Dvar.get(),
             self.constvar.get()))
+        QSettings.Blvar = self.BLvar.get()
         QSettings.save_user_cfg()
         super().ok_pressed()
 

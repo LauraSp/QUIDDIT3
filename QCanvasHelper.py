@@ -4,6 +4,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy import interpolate
 import numpy as np
 from QSettings import *
+from QUtility import *
 
 class QCanvasHelper:
     """class to help with populating the canvas
@@ -39,7 +40,7 @@ class QCanvasHelper:
     def add_map_file(self, file):
         self.maptitles = QSettings.PLOTITEMS
         self.specids = []
-        dta = np.loadtxt(file, dtype=QSettings.results_dtype, delimiter=',', skiprows=2)
+        dta = np.loadtxt(file, dtype=QUtility.results_dtype, delimiter=',', skiprows=2)
 
         self.x = []
         self.y = []
@@ -53,6 +54,7 @@ class QCanvasHelper:
                                 self.mapextent[2]:self.mapextent[3]:resolution]
 
         MAPS = {'$[N_T]$ (ppm)': dta['[NT]'],
+            '$[N_C]$ (ppm)': dta['[NC]'],
             '$[N_A]$ (ppm)': dta['[NA]'],
             '$[N_B]$ (ppm)': dta['[NB]'],
             '$[N_B]/[N_T]$': (dta['[NB]']/dta['[NT]']),

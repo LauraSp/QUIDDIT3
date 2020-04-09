@@ -36,8 +36,8 @@ def deconvolution(filename, age, N_selection):
     B = np.column_stack((QSettings.std[:,0], QSettings.std[:,4]))   
     D = np.column_stack((QSettings.std[:,0], QSettings.std[:,5]))
 
-    spectrum = np.loadtxt(filename, delimiter=',')          # generate np array from file
-
+    #spectrum = np.loadtxt(filename, delimiter=',')          # generate np array from file
+    spectrum = QUtility.read_spec(filename)
   
 ###############################################################################
 ############################ 3107cm-1 HYDROGEN PEAK ###########################
@@ -127,6 +127,7 @@ def deconvolution(filename, age, N_selection):
     pp_res = op.minimize(QUtility.ultimatepsv, x0=psv_x0, args=(pp_wav_inter, pp_inter), method='SLSQP', bounds=p_bounds, constraints=cons)
     #pp_fit = QUtility.ultimatepsv_fit(pp_wav_inter, *pp_res.x)                        
     
+
     if pp_res.success != True:
         print('trying alternative method for fitting platelet peak')
         psv_x0 = QSettings.pp_res_prev

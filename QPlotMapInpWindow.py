@@ -25,6 +25,8 @@ class QPlotMapInpWindow(QTclPopupWindow):
         
         self.min_NTvar = self.getvar(self.clims['$[N_T]$ (ppm)'][0])
         self.max_NTvar = self.getvar(self.clims['$[N_T]$ (ppm)'][1])
+        self.min_NCvar = self.getvar(self.clims['$[N_C]$ (ppm)'][0])
+        self.max_NCvar = self.getvar(self.clims['$[N_C]$ (ppm)'][1])
         self.min_NAvar = self.getvar(self.clims['$[N_A]$ (ppm)'][0])
         self.max_NAvar = self.getvar(self.clims['$[N_A]$ (ppm)'][1])
         self.min_NBvar = self.getvar(self.clims['$[N_B]$ (ppm)'][0])
@@ -65,6 +67,12 @@ class QPlotMapInpWindow(QTclPopupWindow):
                                                 caption='[NT] (ppm): ',
                                                 var1=self.min_NTvar, var2 = self.max_NTvar,
                                                 padx=(5,5), pady=(5,2))
+        
+        jrow += 1
+        self.min_NA, self.max_NA = self.make_double_entrypair(setfr, lrow=jrow, e1row=jrow, e2row=jrow,
+                                                caption='[NC] (ppm): ',
+                                                var1=self.min_NCvar, var2=self.max_NCvar,
+                                                padx=(5,5))
 
         jrow += 1
         self.min_NA, self.max_NA = self.make_double_entrypair(setfr, lrow=jrow, e1row=jrow, e2row=jrow,
@@ -136,6 +144,7 @@ class QPlotMapInpWindow(QTclPopupWindow):
     def ok_pressed(self):
         self.sel_file = self.selfileentry.get() 
         self.clims['$[N_T]$ (ppm)'] =  self.value_tuple(self.min_NTvar, self.max_NTvar) # (self.min_NTvar.get(), self.max_NTvar.get())
+        self.clims['$[N_C]$ (ppm)'] = self.value_tuple(self.min_NCvar, self.max_NCvar)
         self.clims['$[N_A]$ (ppm)'] = self.value_tuple(self.min_NAvar, self.max_NAvar)
         self.clims['$[N_B]$ (ppm)'] = self.value_tuple(self.min_NBvar, self.max_NBvar)
         self.clims['$[N_B]/[N_T]$'] = self.value_tuple(self.min_aggvar, self.max_aggvar)

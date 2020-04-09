@@ -25,6 +25,7 @@ class QCanvasHelperMap(QCanvasHelperBase):
 
         self.idx_data = QSettings.PLOTITEMS
         self.map_data = {'$[N_T]$ (ppm)': dta['[NT]'],
+            '$[N_C]$ (ppm)': dta['[NC]'],
             '$[N_A]$ (ppm)': dta['[NA]'],
             '$[N_B]$ (ppm)': dta['[NB]'],
             '$[N_B]/[N_T]$': (dta['[NB]']/dta['[NT]']),

@@ -72,7 +72,7 @@ class MainWindow(QTclBaseWindow):
         self.ax = self.main_fig.add_subplot(111)
         self.main_fig.gca().invert_xaxis()
         self.main_fig.suptitle('QUIDDIT')
-        self.IIa_spec = np.loadtxt(QSettings.IIa_path, delimiter=',')
+        self.IIa_spec = QUtility.read_spec(QSettings.IIa_path)
         self.ax.plot(self.IIa_spec[:, 0], self.IIa_spec[:, 1], 'k-')
 
         self.main_canvas = self.make_mplcanvas(fig=self.main_fig, erow=row, ecol=0, cspan=4)
@@ -168,7 +168,7 @@ class MainWindow(QTclBaseWindow):
         filemenu.insert_separator(2)
 
         optmenuopt = {'User settings':self.change_user_settings}
-                      #'Custom baseline':self.do_nothing}
+
         self.make_menu(menubar, 'Settings', optmenuopt)
 
         baselinemenuopt = {'Correct baseline':self.baseline}
@@ -298,6 +298,7 @@ class MainWindow(QTclBaseWindow):
             bl_window = QBaselineSubtrWindow(self, "Baseline subtraction", self.bldata)
             if bl_window.dresult =='OK':
                 self.bldta = bl_window.bldta
+                #self.bltype = 
                 i = 1
                 for filename in self.bldta.sel_files:
                     self.print_message(self.message, 'Baseline removal {}/{}:\n{}'.format(i, len(self.bldta.sel_files), filename.split('/')[-1]))

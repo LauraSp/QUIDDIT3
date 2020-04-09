@@ -9,7 +9,7 @@ def diamondtype(filename, savecorrected=False, outpath=''):
 
     #IIa_spec = np.loadtxt(QSettings.IIa_path, delimiter = ',')
 
-    spectrum_prelim = np.loadtxt(filename, delimiter=',')
+    spectrum_prelim = QUtility.read_spec(filename)
     
     if spectrum_prelim[:,1][-1] == 0:
         spectrum_new = spectrum_prelim[:-1]

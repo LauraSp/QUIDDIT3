@@ -1,42 +1,19 @@
 *.pyc
-test results
-test review
-test2 res
-test2 results
-test2 rev
-test2 review
-test3 rev
 .vscode/*
 build/*
 dist/*
 old/*
-123QCanvasHelper_old.py
 QPlot.py
 Qtest.py
-test res.csv
-test rev.csv
-abc res.csv
-abc rev.csv
-DVK 159 peakfit.csv
-test.csv
-test2.csv
 typeIIatest.csv
 DVK 159 complete peak fit.csv
 Sese results.csv
 Sese review.csv
 Sese K1 58 8 3107 batch peak fit.csv
 .vscode/settings.json
-IIb test.csv
-weirdos test.csv
-type Ib with potential A.csv
-SSEF test.csv
-SSEF test diamond type.csv
-finaltestoftheday.csv
-finaltestoftheday2.csv
-finaltestoftheday3.csv
-test123.csv
-testi.csv
-testi2.csv
-testi3.csv
-testi4.csv
-testinew.csv
+Mersmann test res.csv
+Mersmann test rev.csv
+CAXBD_old.csv
+Cowie res.csv
+typeIIa_alt.CSV
+Cowie rev.csv

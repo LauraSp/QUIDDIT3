@@ -17,7 +17,7 @@ def fit_peak(specfile, peak):
     result['name'] = specfile
 
     print('Reading spectrum: {}'.format(specfile))
-    spectrum = np.loadtxt(specfile, delimiter=',')
+    spectrum = QUtility.read_spec(specfile)
     aoi_spec = QUtility.spectrum_slice(spectrum, peak-50, peak+50)
     
     print('Fitting baseline to spectrum.')

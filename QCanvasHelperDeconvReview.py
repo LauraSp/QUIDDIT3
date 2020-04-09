@@ -107,8 +107,10 @@ class QCanvasHelperDeconvReview(QCanvasHelperBase):
         """
         filename = self.spec_files[idx]
         if filename.lower().endswith('.csv'):
-            spec = np.loadtxt(filename, delimiter=',')
+            spec = QUtility.read_spec(filename)
+
             return spec
+            
         else:
             raise Exception("Unknown identifier " + filename + " in read_spectrum")
 

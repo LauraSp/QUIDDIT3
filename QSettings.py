@@ -13,8 +13,8 @@ import matplotlib.cm as cm
 
 
 class QSettings:
-        """Class for storing an retrieving the program settings
-           settings are produced by defaults programmed here
+        """Class for storing an retrieving the program settings.
+           Settings are produced by defaults programmed here
            eventually overwrtittem by user configurations
            taken from a local json-file named quiddit.conf
         """
@@ -27,6 +27,7 @@ class QSettings:
         #path to file with standard spectra of N components (CSV)
         std_path = os.getcwd() + '/CAXBD.csv'
         IIa_path = os.getcwd() + '/typeIIa.csv'
+        IIa_alt_path = os.getcwd() + '/typeIIa_alt.csv'
         std = np.loadtxt(std_path, delimiter = ',')     # read CAXBD spectra
 
         #standard first guess for platelet fit (p_x0, p_I, p_HWHM_l, p_HWHM_r, p_sigma, 
@@ -41,6 +42,9 @@ class QSettings:
         ori_N_comp = np.array((0, 1, 0, 1, 1, 1)) 
         N_comp = np.array(ori_N_comp)
 
+        ori_BLvar = 0
+        BLvar = ori_BLvar
+
         #pp_res_prev = (1365, 1.2, 3, 3, 1, 
         #               1405, 0, 5, 5, 1, 
         #               1332, 0, 5, 5, 0, 
@@ -51,6 +55,7 @@ class QSettings:
 
 
         PLOTITEMS = ('$[N_T]$ (ppm)',
+            '$[N_C]$ (ppm)',
             '$[N_A]$ (ppm)',
             '$[N_B]$ (ppm)',
             '$[N_B]/[N_T]$',
@@ -70,6 +75,7 @@ class QSettings:
 
 
         MAPCLIMS = {'$[N_T]$ (ppm)': (None, None),
+                '$[N_C]$ (ppm)': (None, None),
                 '$[N_A]$ (ppm)': (None, None),
                 '$[N_B]$ (ppm)': (None, None),
                 '$[N_B]/[N_T]$': (0., 1.),
@@ -131,7 +137,7 @@ class QSettings:
                 try:
                         with open(cls.userhome + '/quiddit.conf') as json_file:
                                 alldata = json.load(json_file, object_hook=MyJsonEncoder.decode)
-                        
+                        #cls.BLvar = alldata.BLvar()
                         cls.N_comp = (alldata.N_comp.C,
                                 alldata.N_comp.A,
                                 alldata.N_comp.X,
@@ -147,6 +153,7 @@ class QSettings:
                 """
                 alldta = AllUserConfData()
                 alldta.N_comp = NCompConfData(cls.N_comp)
+                alldta.BLvar = cls.BLvar
                 with open(cls.userhome + '/quiddit.conf', 'w') as json_file:
                         json.dump(alldta, json_file, cls = MyJsonEncoder)
 

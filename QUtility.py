@@ -9,6 +9,7 @@ This file contains all functions created for QUIDDIT
 
 import os
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import scipy.optimize as op
 from scipy import interpolate
@@ -19,6 +20,39 @@ from scipy.stats import gaussian_kde
 ##############################################################################
 ############################# DEFINE FUNCTIONS ###############################
 class QUtility:
+    @staticmethod
+    def read_spec(fname, delimiter=',', sr=2):
+        """Function to read spectra which contain two columns. 
+        Format: 1st column wavenumber/wavelength, 2nd column absorbance/intensity.
+        Can read cvs files without header or with header
+        
+        Parameters:
+        fname: (Path or str) path to spectral file
+        delimiter: (str) delimiter used in file to separate values, default = ','
+        sr: (int) rows to skip (header), default = 2
+        
+        Returns:
+        spec: 2-column array (1st column: wavenumber/wavelength, 2nd column: absorbance/intensity)
+        """
+
+        spectragryphfile = False
+
+        with open(fname, 'r') as file:
+            first_line = file.readline()
+            if first_line[0].startswith('\ufeff'):
+                spectragryphfile = True
+
+        if spectragryphfile:
+            data = pd.read_csv(fname, skiprows=sr, header=None, usecols=[0,1])
+            spec = np.array(data)
+        else:
+            spec = np.loadtxt(fname, delimiter=delimiter)
+
+        if spec[0][0] > spec[-1][0]: #if spec is in reverse order, flip it
+            spec = spec[::-1]
+
+        return spec
+
     @staticmethod
     def closest(target, collection):
         """returns value from collection that is closest to target"""

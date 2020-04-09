@@ -6,9 +6,9 @@ import scipy.optimize as op
 import sys
 
 def remove_baseline(filename, output_path):
-    IIa_spec = np.loadtxt(QSettings.IIa_path, delimiter = ',')
+    IIa_spec = QUtility.read_spec(QSettings.IIa_path)
 
-    spectrum_prelim = np.loadtxt(filename, delimiter=',')
+    spectrum_prelim = QUtility.read_spec(filename)
     spectrum_prelim = QUtility.spectrum_slice(spectrum_prelim, 675, 4000)
     
     print('preliminary correction...')
@@ -54,7 +54,9 @@ def remove_baseline(filename, output_path):
     
     print('saving spectrum after IIa subtraction...')
 
-    np.savetxt(output_path + '/c' + filename.split('/')[-1], spec_temp, delimiter=',') 
+    #np.savetxt(output_path + '/c' + filename.split('/')[-1], spec_temp, delimiter=',') 
+    new_spec = os.path.join(output_path, ('c'+os.path.basename(filename)))
+    np.savetxt(new_spec, spec_temp, delimiter=',')
     
     print('--------------------------------------------------------------------')
 
