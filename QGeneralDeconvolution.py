@@ -223,7 +223,7 @@ def deconvolution(filename, age, N_selection):
     
 # interpolate A, B and D spectra and sample spectrum:
     print('calculating N aggregation data...')
-    N_area = QUtility.spectrum_slice(spectrum, 1001, 1399)
+    N_area = QUtility.spectrum_slice(spectrum, 399, 1401)
     N_wav_new = N_area[:,:-1]  
 
     C_new = QUtility.inter(C, N_wav_new)   
@@ -317,13 +317,16 @@ def deconvolution(filename, age, N_selection):
 ############################### TEMPERATURE ###################################    
 
 # note: in python "ln" is log
-    age_s = age * 1e6 * 365 * 24 * 60 * 60                  #age in seconds
-    T = (-81160/(np.log(((NT/NA)-1)/(age_s*NT*293608)))) - 273.15    
-    
-    if T < 0:
-        temperature= np.nan
+    if np.isnan(NB):
+        temperature = np.nan
     else:
-        temperature = T         
+        age_s = age * 1e6 * 365 * 24 * 60 * 60                  #age in seconds
+        T = (-81160/(np.log(((NT/NA)-1)/(age_s*NT*293608)))) - 273.15    
+    
+        if T < 0:
+            temperature= np.nan
+        else:
+            temperature = T         
            
                      
 ###############################################################################

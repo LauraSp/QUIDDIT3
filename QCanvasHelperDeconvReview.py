@@ -53,18 +53,18 @@ class QCanvasHelperDeconvReview(QCanvasHelperBase):
         sp1.plot(np.array(QSettings.std[:, 0]),
                         N_abs_new - N_fit,
                         'r-', label='misfit')
-        sp1.set(xlim=(1400, 1000))
+        sp1.set(xlim=(1400, spec[0,0]))
         
-        #self.print_message(self.message,
-        #                   self.selected_items[self.index])
-        #self.print_message(self.message,
-        #                   '\nNC: {} ppm\nNA: {} ppm\nNB: {} ppm\ntotal: {} ppm'.format(NC, NA, NB, NT))
-        #self.print_message(self.message,
-        #                   'platelet peak area: {0:.2f} cm-2'.format(p_peak_area))
-        #self.print_message(self.message,
-        #                   'platelet peak position: {0:.2f} cm-1'.format(rev['p_x0']))
-        #self.print_message(self.message,
-        #                  '3107 peak area: {0:.2f} cm-2\n'.format(H_peak_area))
+ #       self.print_message(self.message,
+ #                          self.selected_items[self.index])
+ #       self.print_message(self.message,
+ #                          '\nNC: {} ppm\nNA: {} ppm\nNB: {} ppm\ntotal: {} ppm'.format(NC, NA, NB, NT))
+ #       self.print_message(self.message,
+ #                          'platelet peak area: {0:.2f} cm-2'.format(p_peak_area))
+ #       self.print_message(self.message,
+ #                          'platelet peak position: {0:.2f} cm-1'.format(rev['p_x0']))
+ #       self.print_message(self.message,
+ #                         '3107 peak area: {0:.2f} cm-2\n'.format(H_peak_area))
 
         sp2 = fig.add_subplot(312)
         sp2.axhline(y=0, color='0.7', linestyle='--')

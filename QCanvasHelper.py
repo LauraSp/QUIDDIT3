@@ -105,8 +105,6 @@ class QCanvasHelper:
         t = self.type
         if t== QCanvasHelper.SPECTRUM:
             self.plot_spectrum()
-        elif t == QCanvasHelper.REVIEW:
-            raise NotImplementedError("plot type not yet implmented")
         elif t == QCanvasHelper.PREVIEW:
             raise NotImplementedError("plot type not yet implmented")
         elif t == QCanvasHelper.PRESULTS:
@@ -173,7 +171,6 @@ class QCanvasHelper:
             return np.loadtxt(id, delimiter=',')
         else:
             raise Exception("Unknown identifier " + id + " in get_spec")
-    
 
     def clear_plot(self):
         fig = self.canv.figure
