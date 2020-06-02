@@ -11,8 +11,7 @@ from QSettings import *
 class QBaselineSubtrInp:
     def __init__(self, sel_files, res_dir):
         self.sel_files = sel_files
-        self.res_dir = res_dir
-        
+        self.res_dir = res_dir        
 
 class QBaselineSubtrWindow(QTclPopupWindow):
     def __init__(self, parent, title, baselinedta, is_modal=True):
@@ -26,15 +25,13 @@ class QBaselineSubtrWindow(QTclPopupWindow):
     
     def make_gui(self, title):
         self.setwintitle(title)
-        
+
         self.sel_files = self.bldta.sel_files
         self.res_dir = self.bldta.res_dir
         
         w=44
         row = 0
         lfr = self.make_label_frame(lrow=row, lcol=0, caption='Select files for baseline subtraction', cspan=2, padx=(5,5), pady=(5,5))
-        #tk.Label(self,
-        #         text='Select files for baseline subtraction').grid(row=row, column=0, columnspan=3, sticky='w')
         
         irow = 0
         self.selfilesentry = self.makeentry(lfr, lrow=irow, erow=irow, ecol=1, caption="Select spectra", width=w)

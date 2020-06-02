@@ -42,7 +42,7 @@ class QSettings:
         ori_N_comp = np.array((0, 1, 0, 1, 1, 1)) 
         N_comp = np.array(ori_N_comp)
 
-        ori_BLvar = 0
+        ori_BLvar = "std"
         BLvar = ori_BLvar
 
         #pp_res_prev = (1365, 1.2, 3, 3, 1, 
@@ -51,8 +51,8 @@ class QSettings:
         #              1)
 
         #*this set of parameters is only used when the first attempt of fitting fails.
-        ENVIITEMS = (1992, 1360, 1344, 1282, 1170, 1130)
 
+        ENVIITEMS = (1992, 1360, 1344, 1282, 1170, 1130)
 
         PLOTITEMS = ('$[N_T]$ (ppm)',
             '$[N_C]$ (ppm)',
@@ -66,13 +66,11 @@ class QSettings:
             'platelet peak symmetry $(cm^{-1})$',
             'I(3107) $(cm^{-2})$')
 
-
         PEAKPLOTITEMS = ('$x_0 (cm^{-1})$',
                 '$I (cm^{-1})$',
                 'FWHM $(cm^{-1})',
                 'sigma (-)',
                 'peak area $(cm^{-2})$')
-
 
         MAPCLIMS = {'$[N_T]$ (ppm)': (None, None),
                 '$[N_C]$ (ppm)': (None, None),
@@ -86,16 +84,13 @@ class QSettings:
                 'platelet peak symmetry $(cm^{-1})$': (-15., 5.),
                 'I(3107) $(cm^{-2})$': (None, None)}
 
-
         BATCHPEAKMAPCLIMS = {'$x_0 (cm^{-1})$': (None, None),
                 '$I (cm^{-1})$': (None, None),
                 'FWHM $(cm^{-1})': (None, None),
                 'sigma (-)': (0, 1),
                 'peak area $(cm^{-2})$': (None, None)}
 
-
         STD_COLS = cm.get_cmap('jet')
-
 
         var_defaults = {'home' : home,
                 'N_comp' : N_comp,
@@ -113,7 +108,6 @@ class QSettings:
                 'minvar' : 0.,
                 'maxvar' : 1.,
                 'peak' : 0}
-
 
         # settings for plotting
 
@@ -137,13 +131,15 @@ class QSettings:
                 try:
                         with open(cls.userhome + '/quiddit.conf') as json_file:
                                 alldata = json.load(json_file, object_hook=MyJsonEncoder.decode)
-                        #cls.BLvar = alldata.BLvar()
+
                         cls.N_comp = (alldata.N_comp.C,
                                 alldata.N_comp.A,
                                 alldata.N_comp.X,
                                 alldata.N_comp.B,
                                 alldata.N_comp.D,
                                 alldata.N_comp.const)
+                        cls.BLvar = alldata.BLvar
+
                 except FileNotFoundError:
                         pass #silently accept when the file does not exist
 
@@ -153,7 +149,8 @@ class QSettings:
                 """
                 alldta = AllUserConfData()
                 alldta.N_comp = NCompConfData(cls.N_comp)
-                alldta.BLvar = cls.BLvar
+                alldta.BLvar = BLandNormVar(cls.BLvar)
+
                 with open(cls.userhome + '/quiddit.conf', 'w') as json_file:
                         json.dump(alldta, json_file, cls = MyJsonEncoder)
 
@@ -171,6 +168,11 @@ class NCompConfData:
                 self.D = vector[4]
                 self.const = vector[5]
 
+class BLandNormVar:
+        def __init__(self, var):
+                self.__BLvar__ = True
+                self.BLvar = var
+
 class MyJsonEncoder(json.JSONEncoder):
         
         def default(self, o): # pylint: disable=E0202
@@ -186,10 +188,15 @@ class MyJsonEncoder(json.JSONEncoder):
         @classmethod
         def decode(cls, dct):
                 if "__NCompConfData__" in dct:
-                        return NCompConfData((dct["C"], dct["A"], dct["X"], dct["B"], dct["D"], dct["const"] ))
+                        return NCompConfData((dct["C"], dct["A"], dct["X"], dct["B"], dct["D"], dct["const"]))
+
+                elif "__BLVar__" in dct:
+                        return BLandNormVar(dct["BLVar"])
+                
                 elif "__AllUserConfData__" in dct:
                         answ = AllUserConfData()
                         answ.N_comp = dct["N_comp"]
-                        return answ
+                        answ.BLvar = dct["BLvar"]
+
                 else:
                         return dct

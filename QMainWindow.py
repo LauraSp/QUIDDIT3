@@ -45,7 +45,7 @@ from QCanvasHelperQuadplot import *
 from QCanvasHelperDeconvReview import *
 from QCanvasHelperBatchPeakFitReview import *
 from QCanvasHelperPlotENVI import *
-import QBaseline as bl
+import QBaselineAlt as bl
 import QGeneralDeconvolution as decon
 import QBatchPeakFit as peakfit
 import QENVIconversion as envicon
@@ -298,11 +298,11 @@ class MainWindow(QTclBaseWindow):
             bl_window = QBaselineSubtrWindow(self, "Baseline subtraction", self.bldata)
             if bl_window.dresult =='OK':
                 self.bldta = bl_window.bldta
-                #self.bltype = 
+
                 i = 1
                 for filename in self.bldta.sel_files:
                     self.print_message(self.message, 'Baseline removal {}/{}:\n{}'.format(i, len(self.bldta.sel_files), filename.split('/')[-1]))
-                    bl.remove_baseline(filename, self.bldta.res_dir)
+                    bl.remove_baseline(filename, self.bldta.res_dir, bl_type=QSettings.BLvar)
                     self.update()
                     i += 1
                 self.print_message(self.message, '\nBaseline removal complete.')

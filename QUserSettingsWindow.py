@@ -10,13 +10,13 @@ class QUserSettingsWindow(QTclPopupWindow):
         self.setwintitle(title)
         
         row = 0
-        self.BLvar = tk.IntVar()
+        self.BLvar = tk.StringVar()
         blset_frame = self.make_label_frame(lrow=row, cspan=2, caption='Baseline method', padx=(5,5))
         irow = 0
-        self.stdbl = self.makeradio(parent=blset_frame, erow=irow, caption = "I(1992) = 12.3 cm-1", variable=self.BLvar, value=0)
+        self.stdbl = self.makeradio(parent=blset_frame, erow=irow, caption = "standard", variable=self.BLvar, value="std")
 
         irow += 1
-        self.jpcbl = self.makeradio(parent=blset_frame, erow=irow, caption = "JPC method", variable=self.BLvar, value=1)
+        self.oldbl = self.makeradio(parent=blset_frame, erow=irow, caption = "old", variable=self.BLvar, value="old")
         
         row += 1
         fitset_frame = self.make_label_frame(self, lrow=row, cspan=2, caption='Fit settings', padx=(5,5))

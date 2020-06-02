@@ -82,7 +82,8 @@ class QUtility:
         normf, poly1, poly2 = params
         fitted_spec = absorp * normf - np.polyval((poly1, poly2), wavenum)
         residual = IIa - fitted_spec
-        return np.sum(residual**2)
+        squared_diff = np.sum(residual**2)
+        return squared_diff
     
     @staticmethod
     def IIa_fit(params, wavenum, absorp):
