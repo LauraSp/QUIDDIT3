@@ -42,8 +42,10 @@ class QSettings:
         ori_N_comp = np.array((0, 1, 0, 1, 1, 1)) 
         N_comp = np.array(ori_N_comp)
 
-        ori_BLvar = "std"
+        ori_BLvar = "standard"
         BLvar = ori_BLvar
+
+        saturated = 3.8
 
         #pp_res_prev = (1365, 1.2, 3, 3, 1, 
         #               1405, 0, 5, 5, 1, 

@@ -87,7 +87,7 @@ def remove_baseline(filename, output_path, bl_type='standard'):
 
 
     else:
-        print("")
+        print("BL type not recognised")
       
     print('saving spectrum after IIa subtraction...')
 
@@ -97,4 +97,4 @@ def remove_baseline(filename, output_path, bl_type='standard'):
     print('--------------------------------------------------------------------')
   
 if __name__ == "__main__":
-    remove_baseline_alt(sys.argv[1], sys.argv[2], sys.argv[3])
+    remove_baseline(sys.argv[1], sys.argv[2], sys.argv[3])

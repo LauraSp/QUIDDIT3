@@ -24,8 +24,6 @@ from QSettings import *
 
 def deconvolution(filename, age, N_selection):
 
-    saturated = QSettings.saturated
-
     N_selection = np.array((N_selection))
 
     results = np.zeros(1, dtype=QUtility.results_dtype)
@@ -38,8 +36,8 @@ def deconvolution(filename, age, N_selection):
     B = np.column_stack((QSettings.std[:,0], QSettings.std[:,4]))   
     D = np.column_stack((QSettings.std[:,0], QSettings.std[:,5]))
 
+    #spectrum = np.loadtxt(filename, delimiter=',')          # generate np array from file
     spectrum = QUtility.read_spec(filename)
-
   
 ###############################################################################
 ############################ 3107cm-1 HYDROGEN PEAK ###########################
