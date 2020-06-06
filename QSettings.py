@@ -140,7 +140,7 @@ class QSettings:
                                 alldata.N_comp.B,
                                 alldata.N_comp.D,
                                 alldata.N_comp.const)
-                        cls.BLvar = alldata.BLvar
+                        cls.BLvar = alldata.BLvar.BLvar
 
                 except FileNotFoundError:
                         pass #silently accept when the file does not exist
@@ -180,7 +180,9 @@ class MyJsonEncoder(json.JSONEncoder):
         def default(self, o): # pylint: disable=E0202
                 if isinstance(o, NCompConfData):
                         return o.__dict__
-                if isinstance(o, AllUserConfData):
+                elif isinstance(o, BLandNormVar):
+                        return o.__dict__
+                elif isinstance(o, AllUserConfData):
                         return o.__dict__
                 elif isinstance(o, np.int32):
                         return int(o)
@@ -192,13 +194,13 @@ class MyJsonEncoder(json.JSONEncoder):
                 if "__NCompConfData__" in dct:
                         return NCompConfData((dct["C"], dct["A"], dct["X"], dct["B"], dct["D"], dct["const"]))
 
-                elif "__BLVar__" in dct:
-                        return BLandNormVar(dct["BLVar"])
+                elif "__BLvar__" in dct:
+                        return BLandNormVar(dct["BLvar"])
                 
                 elif "__AllUserConfData__" in dct:
                         answ = AllUserConfData()
                         answ.N_comp = dct["N_comp"]
                         answ.BLvar = dct["BLvar"]
-
+                        return answ
                 else:
                         return dct
