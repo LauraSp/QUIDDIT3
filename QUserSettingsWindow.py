@@ -10,10 +10,11 @@ class QUserSettingsWindow(QTclPopupWindow):
         self.setwintitle(title)
         
         row = 0
-        self.BLvar = tk.StringVar()
         blset_frame = self.make_label_frame(lrow=row, cspan=2, caption='Baseline method', padx=(5,5))
+        
         irow = 0
-        self.stdbl = self.makeradio(parent=blset_frame, erow=irow, caption = "standard", variable=self.BLvar, value="std")
+        self.BLvar = tk.StringVar()
+        self.stdbl = self.makeradio(parent=blset_frame, erow=irow, caption = "standard", variable=self.BLvar, value="standard")
 
         irow += 1
         self.oldbl = self.makeradio(parent=blset_frame, erow=irow, caption = "old", variable=self.BLvar, value="old")
@@ -59,7 +60,6 @@ class QUserSettingsWindow(QTclPopupWindow):
         self.constvar.set(QSettings.N_comp[5])
         self.BLvar.set(QSettings.BLvar)
 
-
     def restore_defaults(self):
         self.Cvar.set(QSettings.ori_N_comp[0])
         self.Avar.set(QSettings.ori_N_comp[1])
@@ -69,6 +69,7 @@ class QUserSettingsWindow(QTclPopupWindow):
         self.constvar.set(QSettings.ori_N_comp[5])
         self.BLvar.set(QSettings.ori_BLvar)
 
+    
     def ok_pressed(self):
         QSettings.N_comp = np.array(
             (self.Cvar.get(), 
@@ -77,7 +78,9 @@ class QUserSettingsWindow(QTclPopupWindow):
             self.Bvar.get(),
             self.Dvar.get(),
             self.constvar.get()))
-        QSettings.Blvar = self.BLvar.get()
+
+        QSettings.BLvar = self.BLvar.get()
+
         QSettings.save_user_cfg()
         super().ok_pressed()
 
