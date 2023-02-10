@@ -94,7 +94,7 @@ class QCanvasHelperDeconvReview(QCanvasHelperBase):
         """
         rev_file = reviewinput.rev_file
         self.spec_files = reviewinput.spec_files
-        self.rev_data = np.loadtxt(rev_file, dtype=QUtility.review_dtype, delimiter=',', skiprows=2) 
+        self.rev_data = np.loadtxt(rev_file, dtype=QUtility.review_dtype, delimiter=',', skiprows=2, usecols=(np.arange(len(QUtility.review_dtype))))
 
         if len(self.rev_data) != len(self.spec_files):
             raise ValueError('The number of spectra ({}) does not match the length of the review file ({}).'.format(len(self.spec_files), len(self.rev_data)))

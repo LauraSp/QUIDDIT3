@@ -74,7 +74,7 @@ class QCanvasHelperQuadplot(QCanvasHelperBase):
         self.canv.draw()
 
     def add_map_data(self, resfile):
-        tmp_data = np.loadtxt(resfile, dtype=QUtility.results_dtype, delimiter=',', skiprows=2)
+        tmp_data = np.loadtxt(resfile, dtype=QUtility.results_dtype, delimiter=',', skiprows=2, usecols=(np.arange(len(QUtility.results_dtype))))
         mask=np.where(tmp_data['p_I'] / (tmp_data['p_HWHM_l'] + tmp_data['p_HWHM_r'])>=0.05)
         self.data=tmp_data[mask]
         self.title = resfile.split('/')[-1]

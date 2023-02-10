@@ -9,7 +9,7 @@ class QCanvasHelperBatchPeakMap(QCanvasHelperBase):
 
     def add_map_file(self, file, clims):
         self.clims = clims
-        dta = np.loadtxt(file, dtype=QUtility.peakfit_dtype, delimiter=',', skiprows=2)
+        dta = np.loadtxt(file, dtype=QUtility.peakfit_dtype, delimiter=',', skiprows=2, usecols=(np.arange(len(QUtility.peakfit_dtype))))
 
         self.x = []
         self.y = []

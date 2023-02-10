@@ -10,7 +10,7 @@ class QCanvasHelperMap(QCanvasHelperBase):
 
     def add_map_file(self, file, clims):
         self.clims = clims
-        dta = np.loadtxt(file, dtype=QUtility.results_dtype, delimiter=',', skiprows=2)
+        dta = np.loadtxt(file, dtype=QUtility.results_dtype, delimiter=',', skiprows=2, usecols=(np.arange(len(QUtility.results_dtype))))
         self.x = []
         self.y = []
         for name in dta['name']:

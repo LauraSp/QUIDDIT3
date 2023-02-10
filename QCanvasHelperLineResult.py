@@ -77,6 +77,6 @@ class QCanvasHelperLineResult(QCanvasHelperBase):
         self.canv.draw()
 
     def add_line_data(self, resfile):
-        self.data = np.loadtxt(resfile, dtype=QUtility.results_dtype, delimiter=',', skiprows=2)
+        self.data = np.loadtxt(resfile, dtype=QUtility.results_dtype, delimiter=',', skiprows=2, usecols=(np.arange(len(QUtility.results_dtype))))
         self.title = resfile.split('/')[-1]
         self.maxidx = 1
