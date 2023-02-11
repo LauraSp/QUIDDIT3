@@ -168,7 +168,9 @@ class QUtility:
     @staticmethod
     def pseudovoigt_fit(x,x0,I,HWHM_l,HWHM_r,sigma):
         """a Pseudovoigt function P(x) = sigma*L(x) + (1-sigma)*G(x)"""
-        psv = sigma*QUtility.lorentzian(x,x0,I,HWHM_l, HWHM_r) + (1-sigma)*QUtility.gaussian(x,x0,I,HWHM_l,HWHM_r)
+        lorentzian = QUtility.lorentzian(x,x0,I,HWHM_l, HWHM_r)
+        gaussian = QUtility.gaussian(x,x0,I,HWHM_l,HWHM_r)
+        psv = sigma*lorentzian + (1-sigma)*gaussian
         return psv
     
     @staticmethod
