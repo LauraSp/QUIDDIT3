@@ -207,8 +207,10 @@ def deconvolution(filename, age, N_selection):
         form_factor = (pp_res.x[2]+pp_res.x[3])/integral_breadth
     
 # centroid/weighted average:
-        avg=(np.average(pp_spec[:,0], weights=pp_abs_new))         
-        
+        if ~np.any(pp_abs_new):
+            avg = np.nan
+        else:
+            avg=(np.average(pp_spec[:,0], weights=pp_abs_new))         
         
     else:
         print('no platelet peak found')
