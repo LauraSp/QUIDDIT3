@@ -1,9 +1,10 @@
 import numpy as np
 
+
 class QDPTconverter:
     def __init__(self, dptconvinp):
         self.dptfile = dptconvinp.dpt_file
-        self.targetdir =dptconvinp.target_dir
+        self.targetdir = dptconvinp.target_dir
 
     def convert(self):
 
@@ -16,5 +17,5 @@ class QDPTconverter:
         i = 1
         for column in spectra.T:
             spectrum = np.column_stack((wav, column))
-            np.savetxt((self.targetdir + '\\spectrum {:05d}.CSV'.format(i)), spectrum, delimiter=',' )
+            np.savetxt((self.targetdir + '\\spectrum {:05d}.CSV'.format(i)), spectrum, delimiter=',')
             i += 1
