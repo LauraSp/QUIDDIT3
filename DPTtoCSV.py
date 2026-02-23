@@ -36,9 +36,15 @@ class DPTConverter:
         num_spectra = len(data[0]) - 1  # excluding x-values
 
         for spec_idx in range(num_spectra):
-            # use file name of dpt file for output files
-            output_name = (f'{os.path.basename(self.dpt_file)}_'
-                           f'{spec_idx + 1}.csv')
+            # use file name of dpt file for output files, strip off extension
+            # and replace '.' with '_' because Bruker uses '.' in their file
+            # names which causes problems later
+            fname = os.path.splitext(
+                os.path.basename(self.dpt_file))[0].replace('.', '_')
+
+            # use idx and add zeros to make it 3 digits (e.g. 001, 002, etc.)
+            number_str = str(spec_idx + 1).zfill(4)
+            output_name = (f'{fname}_{number_str}.csv')
             output_file = os.path.join(self.output_dir, output_name)
 
             # slice out y-values for current spectrum
