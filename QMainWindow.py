@@ -649,4 +649,3 @@ class MainWindow(QTclBaseWindow):
 if __name__ == '__main__':
     mw = MainWindow("QUIDDIT version {}".format(QSettings.version))
     mw.mainloop()
-   

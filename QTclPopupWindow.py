@@ -1,4 +1,6 @@
-from QImpWindowBasics import *
+import tkinter as tk
+from QAllExceptions import *
+from QTclBaseWindow import *
 
 class QTclPopupWindow(QTclWindowBasics, tk.Toplevel):
     """base class for all pop up  windows
@@ -6,7 +8,11 @@ class QTclPopupWindow(QTclWindowBasics, tk.Toplevel):
 
     def __init__(self, parent, title, is_modal=True):
         self.parent = parent
-        self.root = parent.root
+        # parent may be a Tk or another QTclPopupWindow; use its 'root' attribute if present
+        if hasattr(parent, 'root'):
+            self.root = parent.root
+        else:
+            self.root = parent
         self.row = 0
         super().__init__(parent, padx=5, pady=5)
         self.root.grid_columnconfigure(0, weight=1)
@@ -14,15 +20,16 @@ class QTclPopupWindow(QTclWindowBasics, tk.Toplevel):
         self.root.resizable(True, True)
         self.root.rowconfigure(0, weight=1)
         self.root.columnconfigure(0, weight=1)
-        
+
         self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
                                   parent.winfo_rooty()+50))
-                                  
+
         self.protocol("WM_DELETE_WINDOW", self.cancel)
 
+        # allow subclass to initialize variables before GUI construction
+        self.loaded()
         self.make_gui(title)
         self.focus_set()
-        self.loaded()
 
         if is_modal:
             self.grab_set()

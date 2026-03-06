@@ -48,7 +48,7 @@ class QUtility:
         else:
             spec = np.loadtxt(fname, delimiter=delimiter)
 
-        if spec[0][0] > spec[-1][0]: #if spec is in reverse order, flip it
+        if spec[0][0] > spec[-1][0]: # if spec is in reverse order, flip it
             spec = spec[::-1]
 
         return spec
@@ -56,18 +56,21 @@ class QUtility:
     @staticmethod
     def closest(target, collection):
         """returns value from collection that is closest to target"""
-        return min((abs(target-i),i) for i in collection)[1]
+        return min((abs(target-i), i) for i in collection)[1]
 
     @staticmethod
     def spectrum_slice(spec, lower, higher):
-        """returns a slice of a spectrum with wavenumbers between (and including) lower and higher"""
-        spec_slice = [x for x in spec if lower <= x[0] <=higher]
+        """returns a slice of a spectrum with wavenumbers <= lower and >= higher"""
+        spec_slice = [x for x in spec if lower <= x[0] <= higher]
         return np.array(spec_slice, dtype='float64')  
-    
+
     @staticmethod
     def inter(spectrum, wav_new, inttype='linear'):
         """returns interpolated spectrum"""
-        spec_interp = interpolate.interp1d(spectrum[:,0], spectrum[:,1], kind=inttype, bounds_error=False, fill_value=0)
+        spec_interp = interpolate.interp1d(
+            spectrum[:, 0], spectrum[:, 1], kind=inttype, bounds_error=False,
+            fill_value=0
+            )
         return spec_interp(wav_new)
 
     @staticmethod
@@ -76,7 +79,7 @@ class QUtility:
         xy_z = gaussian_kde(xy)(xy)
         xy_idx = xy_z.argsort()
         return xy_idx, xy_z
-    
+
     @staticmethod
     def IIa(params, wavenum, absorp, IIa):
         normf, poly1, poly2 = params
@@ -84,20 +87,21 @@ class QUtility:
         residual = IIa - fitted_spec
         squared_diff = np.sum(residual**2)
         return squared_diff
-    
+
     @staticmethod
     def IIa_fit(params, wavenum, absorp):
         """returns type IIa spectrum multiplied by normf plus linear baseline"""
         normf, poly1, poly2 = params
         model_spec = absorp * normf - np.polyval((poly1, poly2), wavenum)
         return model_spec   
-    
+
     @staticmethod
     def height(wavenum, spectrum):
         mindiff = np.where(QUtility.closest(wavenum, spectrum[:,0]) == spectrum[:,0])[0]
-        I = spectrum[mindiff,1]
-        return float(I)
- 
+        intensity = spectrum[mindiff, 1]
+        return intensity
+    # float(intensity)
+
     @staticmethod
     def peak_area(I, HWHM_l, HWHM_r, sigma):
         return I*(HWHM_l+HWHM_r)*(sigma*(np.pi/2)+(1-sigma)*np.sqrt(np.pi/2))
@@ -106,22 +110,18 @@ class QUtility:
     def lorentzian(x, x0, I, HWHM_l, HWHM_r):
         """returns two lorentzian functions with the same x0 (position of peak maximum) and 
         I (intensity at peak maximum) but different HWHM (half width at half maximum)"""
-    #numerator =  (HWHM**2 )
-    #denominator = ( x - x0 )**2 + HWHM**2
-    #return I*(numerator/denominator)
-    
         x_left = x[(x<=x0)]
         x_right = x[(x>x0)]
         numerator_left = HWHM_l**2
         denominator_left = (x_left - x0)**2 + HWHM_l**2
         y_left = I * (numerator_left/denominator_left) #Lorentzian #1
-    
+
         numerator_right = HWHM_r**2   
         denominator_right = (x_right - x0)**2 + HWHM_r**2    
         y_right = I * (numerator_right/denominator_right) #Lorentzian #2
-    
+
         return np.hstack((y_left, y_right))    #return combination of both Lorentzians
-    
+
     @staticmethod
     def gaussian(x, x0, I, HWHM_l, HWHM_r):
         """returns two gaussian functions with the same x0 (position of peak maximum) and 

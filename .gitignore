@@ -18,3 +18,4 @@ test res.csv
 test rev.csv
 test 3107 fit.csv
 QUIDDIT3.code-workspace
+test/*
