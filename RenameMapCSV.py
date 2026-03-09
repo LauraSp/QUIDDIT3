@@ -66,13 +66,13 @@ class MapCSVInputWindow(tk.Toplevel):
 
     def loaded(self):
         # store selected file paths as a single string separated by ';'
-        self.files = tk.StringVar()
-        self.nrows = tk.IntVar()
-        self.ncolumns = tk.IntVar()
-        self.step_x = tk.DoubleVar()
-        self.step_y = tk.DoubleVar()
-        self.origin_x = tk.DoubleVar()
-        self.origin_y = tk.DoubleVar()
+        self.files = tk.StringVar(value='')
+        self.nrows = tk.IntVar(value=1)
+        self.ncolumns = tk.IntVar(value=1)
+        self.step_x = tk.DoubleVar(value=100.0)
+        self.step_y = tk.DoubleVar(value=100.0)
+        self.origin_x = tk.DoubleVar(value=0.0)
+        self.origin_y = tk.DoubleVar(value=0.0)
         # update count label whenever files change
         try:
             # newer tkinter
