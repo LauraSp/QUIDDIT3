@@ -45,7 +45,7 @@ from QCanvasHelperQuadplot import *
 from QCanvasHelperDeconvReview import *
 from QCanvasHelperBatchPeakFitReview import *
 from QCanvasHelperPlotENVI import *
-import QBaselineAlt as bl
+import QBaseline as bl
 import QGeneralDeconvolution as decon
 import QBatchPeakFit as peakfit
 import QENVIconversion as envicon
