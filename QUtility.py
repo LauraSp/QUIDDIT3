@@ -6,7 +6,6 @@ This file contains all functions created for QUIDDIT
 """
 ##############################################################################
 ##################### IMPORT STANDARD PYTHON LIBRARIES #######################
-
 import os
 import numpy as np
 import pandas as pd
@@ -22,15 +21,15 @@ from scipy.stats import gaussian_kde
 class QUtility:
     @staticmethod
     def read_spec(fname, delimiter=',', sr=2):
-        """Function to read spectra which contain two columns. 
+        """Function to read spectra which contain two columns.
         Format: 1st column wavenumber/wavelength, 2nd column absorbance/intensity.
         Can read cvs files without header or with header
-        
+
         Parameters:
         fname: (Path or str) path to spectral file
         delimiter: (str) delimiter used in file to separate values, default = ','
         sr: (int) rows to skip (header), default = 2
-        
+
         Returns:
         spec: 2-column array (1st column: wavenumber/wavelength, 2nd column: absorbance/intensity)
         """
@@ -93,20 +92,76 @@ class QUtility:
         """returns type IIa spectrum multiplied by normf plus linear baseline"""
         normf, poly1, poly2 = params
         model_spec = absorp * normf - np.polyval((poly1, poly2), wavenum)
-        return model_spec   
+        return model_spec
 
     @staticmethod
     def height(wavenum, spectrum):
-        mindiff = np.where(QUtility.closest(wavenum, spectrum[:,0]) == spectrum[:,0])[0]
-        intensity = spectrum[mindiff, 1]
-        return intensity
-    # float(intensity)
+        """Returns the intensity at the wavenumber closest to the target wavenum.
+
+        Parameters
+        ----------
+        wavenum : float
+            Target wavenumber
+        spectrum : ndarray
+            2D array with shape (n, 2) where column 0 is wavenumbers,
+            column 1 is intensities
+
+        Returns
+        -------
+        float
+            Intensity value at the closest wavenumber
+        """
+        # Find the closest wavenumber in the spectrum
+        closest_wavenum = QUtility.closest(wavenum, spectrum[:, 0])
+
+        # Find the index of this closest wavenumber
+        mindiff = np.where(closest_wavenum == spectrum[:, 0])[0]
+
+        # Extract the intensity and ensure it's a scalar float
+        if len(mindiff) > 0:
+            intensity = spectrum[mindiff[0], 1]  # Take first match if multiple
+            return float(intensity)  # Convert to Python float
+        else:
+            # Fallback: find the absolute closest index
+            idx = np.argmin(np.abs(spectrum[:, 0] - wavenum))
+            return float(spectrum[idx, 1])
+
+    @staticmethod
+    def average_intensity(wavenum_center, wavenumber_range, spectrum):
+        """Returns the average intensity over a wavenumber range around a center point.
+
+        Parameters
+        ----------
+        wavenum_center : float
+            Center wavenumber for the averaging region
+        wavenumber_range : float
+            Total range to average over (e.g., 10 means ±5 cm⁻¹ from center)
+        spectrum : ndarray
+            2D array with shape (n, 2) where column 0 is wavenumbers, column 1 is intensities
+
+        Returns
+        -------
+        float
+            Average intensity over the specified wavenumber range
+        """
+        lower_bound = wavenum_center - wavenumber_range / 2
+        upper_bound = wavenum_center + wavenumber_range / 2
+
+        # Get spectrum slice in the range
+        spec_slice = QUtility.spectrum_slice(spectrum, lower_bound, upper_bound)
+
+        if len(spec_slice) == 0:
+            # Fallback to closest single point if no data in range
+            return QUtility.height(wavenum_center, spectrum)
+
+        # Return average intensity
+        return float(np.mean(spec_slice[:, 1]))
 
     @staticmethod
     def peak_area(I, HWHM_l, HWHM_r, sigma):
         return I*(HWHM_l+HWHM_r)*(sigma*(np.pi/2)+(1-sigma)*np.sqrt(np.pi/2))
 
-    @staticmethod 
+    @staticmethod
     def lorentzian(x, x0, I, HWHM_l, HWHM_r):
         """returns two lorentzian functions with the same x0 (position of peak maximum) and 
         I (intensity at peak maximum) but different HWHM (half width at half maximum)"""
@@ -114,13 +169,13 @@ class QUtility:
         x_right = x[(x>x0)]
         numerator_left = HWHM_l**2
         denominator_left = (x_left - x0)**2 + HWHM_l**2
-        y_left = I * (numerator_left/denominator_left) #Lorentzian #1
+        y_left = I * (numerator_left/denominator_left) # Lorentzian #1
 
         numerator_right = HWHM_r**2   
         denominator_right = (x_right - x0)**2 + HWHM_r**2    
-        y_right = I * (numerator_right/denominator_right) #Lorentzian #2
+        y_right = I * (numerator_right/denominator_right) # Lorentzian #2
 
-        return np.hstack((y_left, y_right))    #return combination of both Lorentzians
+        return np.hstack((y_left, y_right))    # return combination of both Lorentzians
 
     @staticmethod
     def gaussian(x, x0, I, HWHM_l, HWHM_r):
@@ -132,25 +187,25 @@ class QUtility:
 
         x_l = x[(x<=x0)]
         x_r = x[(x>x0)]
-    
+
         numerator_l = (x_l-x0)**2    
         denominator_l = 2*HWHM_l**2
         y_l = I*np.exp(-numerator_l/denominator_l)
-    
+
         numerator_r = (x_r-x0)**2      
         denominator_r = 2*HWHM_r**2  
         y_r = I*np.exp(-numerator_r/denominator_r)
-    
+
         return np.hstack((y_l, y_r))    #return combination of both Gaussians
 
     @staticmethod
     def pseudovoigt(params, *args):
         """returns the sum of (measured-model)**2 using a Pseudovoigt function 
         P(x) = sigma*L(x) + (1-sigma)*G(x) as model and measured absorptions"""
-    
+
         x0, I, HWHM_l, HWHM_r, sigma = params      
         psv = sigma*QUtility.lorentzian(args[0],x0,I,HWHM_l, HWHM_r) + (1-sigma)*QUtility.gaussian(args[0],x0,I,HWHM_l,HWHM_r)
-    
+
         error = args[1] - psv
         return np.sum(error**2)
 
@@ -158,13 +213,13 @@ class QUtility:
     def pseudovoigt_const(params, *args):
         """returns the sum of (measured-model)**2 using a Pseudovoigt function 
         P(x) = sigma*L(x) + (1-sigma)*G(x) as model and measured absorptions"""
-    
+
         x0, I, HWHM_l, HWHM_r, sigma, const = params      
         psv = sigma*QUtility.lorentzian(args[0],x0,I,HWHM_l, HWHM_r) + (1-sigma)*QUtility.gaussian(args[0],x0,I,HWHM_l,HWHM_r) + const
-    
+
         error = args[1] - psv
         return np.sum(error**2)
-    
+
     @staticmethod
     def pseudovoigt_fit(x,x0,I,HWHM_l,HWHM_r,sigma):
         """a Pseudovoigt function P(x) = sigma*L(x) + (1-sigma)*G(x)"""
@@ -172,7 +227,7 @@ class QUtility:
         gaussian = QUtility.gaussian(x,x0,I,HWHM_l,HWHM_r)
         psv = sigma*lorentzian + (1-sigma)*gaussian
         return psv
-    
+
     @staticmethod
     def ultimatepsv(params, *args):
         p_x0, p_I, p_HWHM_l, p_HWHM_r, p_sigma, H_x0, H_I, H_HWHM_l, H_HWHM_r, H_sigma, B_x0, B_I, B_HWHM_l, B_HWHM_r, B_sigma, c = params
@@ -182,7 +237,7 @@ class QUtility:
         psv_all = p_psv + H_psv + B_psv + c
         error = args[1] - psv_all
         return np.sum(error**2)
-    
+
     @staticmethod
     def ultimatepsv_fit(x, p_x0, p_I, p_HWHM_l, p_HWHM_r, p_sigma, H_x0, H_I, H_HWHM_l, H_HWHM_r, H_sigma, B_x0, B_I, B_HWHM_l, B_HWHM_r, B_sigma, c):  
         p_psv = p_sigma*QUtility.lorentzian(x,p_x0,p_I,p_HWHM_l, p_HWHM_r) + (1-p_sigma)*QUtility.gaussian(x,p_x0,p_I,p_HWHM_l,p_HWHM_r)
@@ -192,7 +247,7 @@ class QUtility:
         if psv_all.size == 0:
             psv_all = np.zeros(len(x))
             psv_all[:] = np.nan
-        return psv_all  
+        return psv_all
 
     @staticmethod
     def ABD(params, *args):
@@ -212,17 +267,17 @@ class QUtility:
     def CAXBD(factors, components):
         """returns sum of A, B and D spectra weighted by a, b and d"""
         factors = np.nan_to_num(factors)
-        
+
         # components should have shape (m, n), factors should have shape (n,) or (n+1,).
         # If a constant is added, factors will be one item longer (= n+1) than components
-        
+
         if np.shape(factors)[0] == np.shape(components)[1]: #no constant
             model_spec = np.sum(factors * components, axis=1)
         else:                                               #constant
             model_spec = np.sum(factors[:-1] * components, axis=1) + factors[-1]
-    
+
         return np.array(model_spec)
-    
+
     @staticmethod
     def CAXBD_err(factors, components, absorp):
         model_spec = QUtility.CAXBD(factors, components)
@@ -291,12 +346,12 @@ class QUtility:
     def Nd_bound8(params):
         c, a, x, b, d = params
         return .365*b - d
-    
+
     @staticmethod
     def pp_cons1(params):
         p_x0, p_I, p_HWHM_l, p_HWHM_r, p_sigma, H_x0, H_I, H_HWHM_l, H_HWHM_r, H_sigma, B_x0, B_I, B_HWHM_l, B_HWHM_r, B_sigma, c = params
         return 10-abs(H_HWHM_l - H_HWHM_r)
-    
+
     @staticmethod
     def pp_cons2(params):
         p_x0, p_I, p_HWHM_l, p_HWHM_r, p_sigma, H_x0, H_I, H_HWHM_l, H_HWHM_r, H_sigma, B_x0, B_I, B_HWHM_l, B_HWHM_r, B_sigma, c = params
@@ -315,28 +370,28 @@ class QUtility:
 
 ###############################################################################
 ######################### QUIDDIT DATA TYPES ##################################
-    
+
     results_dtype=np.dtype([('name', '|O8'),('p_x0','float64'),('p_I','float64'), ('p_HWHM_l','float64'),('p_HWHM_r','float64'),('p_sigma','float64'), 
         ('avg','float64'), ('p_area_num_data','float64'), ('p_area_ana','float64'), 
         ('p_As','float64'), ('p_Tf','float64'), ('p_beta','float64'), ('p_phi','float64'), ('p_sumsqu','float64'), 
         ('c','float64'),('a','float64'), ('x', 'float64'), ('b','float64'), ('d', 'float64'), ('N_poly','float64'),
         ('[NC]','float64'), ('[NA]','float64'), ('[NB]','float64'), ('[NT]','float64'), ('T', 'float64'), ('N_sumsqu','float64'), 
         ('I_3107','float64'), ('H_area_ana','float64'),])
-    
+
     res_header = 'name, p_x0, p_I, p_HWHM_l, p_HWHM_r, p_sigma, avg, area_num_data, area_ana, As, Tf, beta, phi, pp_sumsqu, c, a, x, b, d, const, [NC], [NA], [NB], [Nt], T, N_sumsqu, I_3107, H_area_ana'
 
-                    
+
     review_dtype=np.dtype([('name', '|O8'), ('p_x0','float64'),('p_I','float64'), ('p_HWHM_l','float64'),('p_HWHM_r','float64'),('p_sigma','float64'),
         ('H1405_x0', 'float64'), ('H1405_I', 'float64'), ('H1405_HWHM_l','float64'), ('H1405_HWHM_r','float64'), ('H1405_sigma','float64'),
         ('B_x0','float64'), ('B_I', 'float64'), ('B_HWHM_l','float64'), ('B_HWHM_r','float64'), ('B_sigma','float64'), ('psv_c','float64'), ('p_s2n','float64'),
         ('avg','float64'), ('c','float64'),('a','float64'), ('x', 'float64'), ('b','float64'), ('d', 'float64'), ('N_poly', 'float64'), 
         ('H_bg_a','float64'),('H_bg_b','float64'), ('H_bg_c','float64'),('H_bg_d','float64'), ('H_pos','float64'),('H_I','float64'), 
         ('H_HWHM_l','float64'),('H_HWHM_r','float64'),('H_sigma','float64') , ('path', 'S100')])
-    
+
     rev_header = 'name, p_x0, p_I, p_HWHM_l, p_HWHWM_r, p_sigma, H1405_x0, H1405_I, H1405_HWHM_l, H1405_HWHWM_r, H1405_sigma, B_x0, p_I, B_HWHM_l, B_HWHWM_r, B_sigma, p_s2n, psv_c, avg, c, a, x, b, d, const, H_bg_a, H_bg_b, H_bg_c, H_bg_d, H_x0, H_I, H_HWHM_l, H_HWHM_r, H_sigma, path'
 
 
     peakfit_dtype = np.dtype([('name', '|O8'), ('x0','float64'),('I','float64'), ('HWHM_l','float64'),('HWHM_r','float64'),('sigma','float64'),('area_ana','float64'),('area_num','float64'),
         ('bg_a','float64'),('bg_b','float64'), ('bg_c','float64'),('bg_d','float64')])
-    
+
     peakfit_header = 'name, x0, I, HWHM_l, HWHM_r, sigma, area_ana, area_num, bg_a, bg_b, bg_c, bg_d'
