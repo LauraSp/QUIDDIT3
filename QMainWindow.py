@@ -296,7 +296,7 @@ class MainWindow(QTclBaseWindow):
     def baseline(self):
         try:
             bl_window = QBaselineSubtrWindow(self, "Baseline subtraction", self.bldata)
-            if bl_window.dresult =='OK':
+            if bl_window.dresult == 'OK':
                 self.bldta = bl_window.bldta
 
                 i = 1
@@ -480,13 +480,13 @@ class MainWindow(QTclBaseWindow):
         #get a new input window initialised with process inp data
         try:
             inpf = QProcessDtaInpWindow(self, "Deconvolution Input", self.prcdta)
-            
+
             if inpf.dresult =='OK':
                 self.prcdta = inpf.prcdta
 
                 specfiles = self.prcdta.selectedfiles
                 assert(len(specfiles)>=1), "No files selected."
-                
+
                 resultfile = self.prcdta.result
                 reviewfile = self.prcdta.review
 
@@ -500,7 +500,11 @@ class MainWindow(QTclBaseWindow):
                 age = self.prcdta.age
                 samplename = self.prcdta.name
 
-                ch = QCanvasHelperSpectrum(self.main_canvas)
+                # only create canvas helper if plotting is requested
+                if QSettings.plot_during_deconv:
+                    ch = QCanvasHelperSpectrum(self.main_canvas)
+                else:
+                    ch = None
 
                 #prepare files for results and review
                 with open(resultfile, 'w') as res_fob:
@@ -513,13 +517,15 @@ class MainWindow(QTclBaseWindow):
 
                 i = 1
                 for filename in specfiles:
-                    ch.add_spectra_files([filename])
-                    ch.display_first()
+                    if ch is not None:
+                        ch.add_spectra_files([filename])
+                        ch.display_first()
                     self.print_message(self.message, 'Processing file {}/{}'.format(i, len(specfiles)))
                     result, review = decon.deconvolution(filename, self.prcdta.age, QSettings.N_comp)
 
-                    self.print_result(QUtility.res_header, result[0])
-                
+                    if QSettings.long_print_output:
+                        self.print_result(QUtility.res_header, result[0])
+
                     with open(resultfile, 'a') as res_fob:
                         for item in result[0]:
                             res_fob.write(str(item)+',')
@@ -534,12 +540,15 @@ class MainWindow(QTclBaseWindow):
                     self.update()
 
                 self.print_message(self.message, 'Deconvolution complete.')
+                self.print_message(
+                    self.message, 'Results saved to: {}'.format(resultfile))
+                self.print_message(
+                    self.message, 'Review saved to: {}'.format(reviewfile))
 
         except Exception as e:
-            QTclMessageWindow(mw, "QUIDDIT Error", "An unhandled error has occured", 
-                "Original message: {}".format(str(e)),
-                 e)
-
+            QTclMessageWindow(
+                mw, "QUIDDIT Error", "An unhandled error has occured",
+                "Original message: {}".format(str(e)), e)
 
     def peak_fit(self):
         try:

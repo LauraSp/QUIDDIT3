@@ -78,9 +78,6 @@ def deconvolution(filename, age, N_selection):
 # calculate peak area:
     print('calculating peak area...')          
     H_spec = QUtility.spectrum_slice(spectrum, 3102, 3112)
-    #H_spec2 = H_spec[:,1] - np.polyval(H_p_bg, H_spec[:,0])
-    #H_area_numerical_data = integrate.simps(H_spec2)    
-    #H_area_numerical_fit = integrate.simps(H_fit)      #integrate bg corrected fit
     H_area_analytical = 2*(H_res.x[1])*((H_res.x[2]+H_res.x[3])/2)*(H_res.x[4]*(np.pi/2)+(1-H_res.x[4])*np.sqrt(np.pi/2))      
           
 ###############################################################################
@@ -135,47 +132,43 @@ def deconvolution(filename, age, N_selection):
         psv_x0 = QSettings.pp_res_prev
         pp_res = op.minimize(QUtility.ultimatepsv, x0=psv_x0, args=(pp_wav_inter, pp_inter), method='SLSQP', bounds=p_bounds, constraints=cons)
         #pp_fit = utility.ultimatepsv_fit(pp_wav_inter, *pp_res.x)                              
-        
-        
-    pp_sumsqu = pp_res.fun     
-      
-    
+
+    pp_sumsqu = pp_res.fun
+
     #if pp_res.success == True and pp_res.x[1]>=1:
-    if pp_res.x[1]>0:
+    if pp_res.x[1] > 0:
         p_x0, p_I, p_HWHM_l, p_HWHM_r, p_sigma, H1405_x0, H1405_I, H1405_HWHM_l, H1405_HWHM_r, H1405_sigma, B_x0, B_I, B_HWHM_l, B_HWHM_r, B_sigma, psv_c = pp_res.x       
-        
+
         # calculate peak area in different ways:
         print('calculating peak area and peak symmetry...')
         if pp_res.x[2]<1:
             int_lower_bound = pp_res.x[0] - 15
         else:
             int_lower_bound = pp_res.x[0] - 15*pp_res.x[2]
-        
+
         if pp_res.x[3]<1:
             int_upper_bound = pp_res.x[0] + 15
         else:
             int_upper_bound = pp_res.x[0] + 15*pp_res.x[3]
-            
+
         pp_spec = QUtility.spectrum_slice(spectrum, int_lower_bound, int_upper_bound)
-        
+
         #H1405_psv = utility.pseudovoigt_fit(pp_spec[:,0],*pp_res.x[5:10])
-        
+
         #B_psv = utility.pseudovoigt_fit(pp_spec[:,0],*pp_res.x[10:-1])
-        
+
         pp_abs_new = QUtility.pseudovoigt_fit(pp_spec[:,0],*pp_res.x[:5])
-            
-        p_area_numerical_data = integrate.simps(pp_abs_new)
-        #p_area_numerical_fit = integrate.simps(utility.pseudovoigt_fit(pp_spec[:,0],*pp_res.x[:5]))      #integrate bg corrected fit
-        p_area_analytical = 2*(pp_res.x[1])*((pp_res.x[2]+pp_res.x[3])/2)*(pp_res.x[4]*(np.pi/2)+(1-pp_res.x[4])*np.sqrt(np.pi/2))                                       
-                                                                                                                                        
+
+        p_area_numerical_data = integrate.simpson(pp_abs_new)
+        p_area_analytical = 2*(pp_res.x[1])*((pp_res.x[2]+pp_res.x[3])/2)*(pp_res.x[4]*(np.pi/2)+(1-pp_res.x[4])*np.sqrt(np.pi/2))                                                                                                                                        
 
 # symmetry calculations:
         sym_lower_bound = pp_res.x[0]-5*pp_res.x[2]
         sym_upper_bound = pp_res.x[0]+5*pp_res.x[3]
-        
+
         wavenum_l = np.linspace(sym_lower_bound, pp_res.x[0], 100)
         wavenum_r = np.linspace(pp_res.x[0], sym_upper_bound, 100)
-        
+
         absorp_l = QUtility.pseudovoigt_fit(wavenum_l, *pp_res.x[:5])
         absorp_r = QUtility.pseudovoigt_fit(wavenum_r, *pp_res.x[:5])         
 

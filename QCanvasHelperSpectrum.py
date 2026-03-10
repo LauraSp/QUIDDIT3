@@ -14,7 +14,6 @@ class QCanvasHelperSpectrum(QCanvasHelperBase):
         self.canv.figure.suptitle(self.get_spec_name(spid))
         self.canv.draw()
 
-
     def add_spectra_files(self, files):
         self.specids = []
         for file in files:
@@ -35,5 +34,3 @@ class QCanvasHelperSpectrum(QCanvasHelperBase):
             return id.split("/")[-1].split(".")[0]
         else:
             raise Exception("Unknown identifier " + id + " in get_spec_name")
-
-    
