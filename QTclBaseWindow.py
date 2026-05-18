@@ -16,7 +16,6 @@ class QTclBaseWindow(QTclWindowBasics, tk.Frame):
         self.root.mainloop()
 
     def __init__(self, title):
-        #NoDefaultRoot()
         self.root = tk.Tk() 
         super().__init__(self.root, padx=5, pady=5)
         self.root.grid_columnconfigure(0, weight=1)
@@ -34,19 +33,20 @@ class QTclBaseWindow(QTclWindowBasics, tk.Frame):
         self.root.title(title)
 
     def loaded(self):
-        raise TclWinBaseUsageException("Override me! Always override loaded method")
+        raise TclWinBaseUsageException(
+            "Override me! Always override loaded method"
+            )
 
     def make_gui(self, title):
-        raise TclWinBaseUsageException("Override me! Always override make_gui method")
-        
+        raise TclWinBaseUsageException(
+            "Override me! Always override make_gui method"
+            )
+
     def make_menu(self, menubar, title, itemlib):     
         submenu = tk.Menu(menubar, tearoff=0)
         for item in itemlib:
             submenu.add_command(label=item, command=itemlib[item])
-            
-        menubar.add_cascade(label=title, menu=submenu)
-        
-        return submenu
-       
 
-    
+        menubar.add_cascade(label=title, menu=submenu)
+
+        return submenu
