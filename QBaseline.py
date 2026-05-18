@@ -4,6 +4,7 @@ import numpy as np
 import os
 import scipy.optimize as op
 import sys
+import matplotlib.pyplot as plt
 
 
 def remove_baseline(filename, output_path, bl_type='standard'):
@@ -25,7 +26,8 @@ def remove_baseline(filename, output_path, bl_type='standard'):
         Path to the output directory.
     bl_type : str, optional
         Type of baseline removal ('standard' or 'difference'). Default is
-        'standard'.
+        'standard'. 'experimental' is also available but quarantined for now as
+        it seems less robust.
 
     Returns
     -------
@@ -38,6 +40,7 @@ def remove_baseline(filename, output_path, bl_type='standard'):
     # read sample spectrum
     spec_orig = QU.read_spec(filename)
     spec_orig = QU.spectrum_slice(spec_orig, 400, 7000)
+    # spec_orig = QU.spectrum_slice(spec_orig, 675, 4000) # 2019 version
 
     # preliminary baseline correction
     bl = -spec_orig[-1][1]
@@ -49,7 +52,62 @@ def remove_baseline(filename, output_path, bl_type='standard'):
         IIa_spec, spec_prelim[:, 0:-1], inttype='linear')
 
     print('preliminary correction...')
+
+    # standard baseline method - good old QUIDDIT style
     if bl_type == 'standard':
+        mindiff = QU.closest(1992.0, spec_prelim[:, 0])
+        row = np.where(spec_prelim[:, 0] == mindiff)[0][0]
+        factor = 12.3/abs(spec_prelim[row, 1])
+        print(
+            f'Scaling factor: {factor:.2f} '
+            f'(intensity at 1992 cm⁻¹: {spec_prelim[row, 1]:.3f})'
+            )
+        spec_prelim[:, 1] *= factor
+
+        two_phonon_left = QU.spectrum_slice(spec_prelim, 1500, 2312)
+        two_phonon_right = QU.spectrum_slice(spec_prelim, 2391, 3000)
+        two_phonon_extra = QU.spectrum_slice(spec_prelim, 3800, 4000)
+        two_phonon = np.vstack(
+            (two_phonon_left, two_phonon_right, two_phonon_extra))
+
+        two_phonon_wav = np.arange(
+            two_phonon[:, 0][0], two_phonon[:, 0][-1], 0.1)
+        two_phonon_ip = QU.inter(spec_prelim, two_phonon_wav, inttype='linear')
+
+        IIa_spec_ip_new = QU.inter(IIa_spec, two_phonon_wav, inttype='linear')
+
+        IIa_args = (two_phonon_wav, two_phonon_ip, IIa_spec_ip_new)
+        IIa_x0 = (1, 0, 0)
+        IIa_bounds = [(0.0, None), (None, None), (None, None)]
+        IIa_res = op.minimize(QU.IIa, args=IIa_args, x0=IIa_x0,
+                              method='L-BFGS-B', bounds=IIa_bounds)
+
+        print(IIa_res)
+
+        fit_IIa = QU.IIa_fit(
+            IIa_res.x,
+            spec_prelim[:, 0].reshape(len(spec_prelim[:, 0]), 1),
+            spec_prelim[:, 1].reshape(len(spec_prelim[:, 1]), 1)
+            )
+        abs_temp = fit_IIa - IIa_spec_ip
+
+        spec_final = np.column_stack((spec_prelim[:, 0], abs_temp))
+
+        # plotting for debugging
+        plt.figure()
+        plt.plot(spec_orig[:,0], spec_orig[:,1], 'k.', label='original')
+        plt.plot(spec_prelim[:,0], spec_prelim[:,1], label='after prelim corr.')
+        plt.plot(spec_final[:,0], spec_final[:,1], label='final spec')
+        # reverse x-axis
+        plt.gca().invert_xaxis()
+
+        plt.xlabel('Wavenumber (cm⁻¹)')
+        plt.legend(loc='best')
+
+        plt.show()
+
+    # quarantining this method for now  it seems less robust
+    elif bl_type == 'experimental':
         # Use average intensity over ±5 cm⁻¹ range around 1992 cm⁻¹
         # for robustness
         I_1992_avg = QU.average_intensity(1992, 10, spec_prelim)
@@ -101,7 +159,8 @@ def remove_baseline(filename, output_path, bl_type='standard'):
         two_phonon_right = QU.spectrum_slice(spec_prelim, 2391, 3000)
         two_phonon_extra = QU.spectrum_slice(spec_prelim, 3800, 4000)
         two_phonon = np.vstack(
-            (two_phonon_left, two_phonon_right, two_phonon_extra))
+            (two_phonon_left, two_phonon_right, two_phonon_extra)
+            )
 
         two_phonon_wav = np.arange(
             two_phonon[:, 0][0], two_phonon[:, 0][-1], 0.1)
@@ -154,6 +213,18 @@ def remove_baseline(filename, output_path, bl_type='standard'):
         abs_temp = fit_IIa - IIa_spec_ip
 
         spec_final = np.column_stack((spec_prelim[:, 0], abs_temp))
+
+        plt.figure()
+        plt.plot(spec_orig[:,0], spec_orig[:,1], 'k.', label='original')
+        plt.plot(spec_prelim[:,0], spec_prelim[:,1], label='after prelim corr.')
+        plt.plot(spec_final[:,0], spec_final[:,1], label='final spec')
+        # reverse x-axis
+        plt.gca().invert_xaxis()
+
+        plt.xlabel('Wavenumber (cm⁻¹)')
+        plt.legend(loc='best')
+
+        plt.show()
 
     elif bl_type == 'difference':
         I_2670 = QU.height(2670, spec_prelim)
